@@ -1,0 +1,82 @@
+@import '../../../shared/scss/index.scss';
+
+.top-bar{
+    margin-bottom: 30px;
+    border-top: 10px solid $primary-color;
+    border-bottom: 2px solid $primary-color;
+    height: 110px;
+    background-color: $background-light;
+    display:flex;
+    justify-content:space-between;
+    align-items: center;
+    padding:0 20px;
+
+    i.icon, i.icons {
+        font-size: 1.3em;
+        margin-left: 10px;
+    
+    }
+
+    h3{
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        color: $font-dark;
+        padding-bottom: 15px;
+
+        &:hover{
+            color:$primary-color;
+        }
+
+        
+    }
+
+    &__left{
+        i{
+            font-size: 20px !important;
+            &:hover{
+                cursor: pointer;
+            }
+        }
+    }
+
+    &__right{
+        display: flex;
+        align-items:center;
+
+        a{
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            color: $font-light;
+
+            &:hover{
+                color:$primary-color;
+            }
+
+            
+        }
+        
+        img{
+            height:15px;
+            width:15px;
+            margin-right: 10px;
+            border-radius: 50px;
+        }
+        i{  
+            margin-left: 35px;
+            display: flex;
+            align-items: center;
+            font-size: 30px;
+            &:hover{
+                cursor: pointer;
+                color:$primary-color;
+
+            }
+        }
+    
+        
+    }
+    
+
+}

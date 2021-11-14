@@ -1,0 +1,96 @@
+@import '../../shared/scss/index.scss';
+
+.ui.form.add-medic-exam-form{
+    
+    .search{
+        .ui.input{
+            width:100%;
+            
+            
+            
+            
+        }
+        i.search.icon{
+            cursor: pointer !important ;
+            
+        }
+        
+        
+    }
+
+    .three-columns{
+        display: -ms-flex;
+    	display: -webkit-flex;
+	    display: flex;
+        width:100%;
+        
+        
+
+        .field{
+           
+            width:30%;
+            margin-right: 15px;
+        }
+    }
+
+    .two-columns{
+        display: -ms-flex;
+    	display: -webkit-flex;
+	    display: flex;
+        width:100%;
+        
+        .field{
+            
+            
+                width:50% !important;
+                margin-right: 15px !important;
+                align-items: center !important;
+                
+            
+        }
+        
+    }
+
+    .header-section{
+        h4{
+            margin:30px 0px;
+            border-bottom:2px solid $primary-color;
+            padding-bottom: 4px;
+        }
+    }
+
+    .list.patology{
+        padding:30px;
+        color: $font-light;
+    
+        .item{
+            display: flex;
+            align-items:center;
+            .content{
+                display: flex;
+                align-items:center;
+
+                img{
+
+                }
+                a{
+                    color: white !important;
+                    
+                }
+                .description{
+                    color: red !important;
+                }
+                i{
+                    margin-left: 5px;
+                    color:$primary-color;
+                    &:hover{
+                        cursor: pointer;
+                    }    
+                }
+
+            }
+        }
+    }
+
+    
+}

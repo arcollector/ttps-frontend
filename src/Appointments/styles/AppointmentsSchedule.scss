@@ -1,0 +1,68 @@
+@import '../../shared/scss/index.scss';
+
+
+
+.calendar-screen{
+    display: flex;
+    flex-flow:column;
+    height:85.5vh;
+    
+
+    .rbc-calendar{
+        height:81.5vh;
+
+        .rbc-agenda-view{
+            border:1px solid black;
+        }
+
+        .rbc-agenda-table{
+            tr{
+                border:1px solid grey;
+                color:black;
+            }
+            .rbc-agenda-date-cell{
+                border:1px solid $primary-color;
+                color:black;
+            }
+        }
+
+        .rbc-toolbar{
+            border-bottom: 0.5px solid $primary-color;
+
+            .rbc-btn-group{
+                button{
+                    border:1px solid black;
+                }
+            }
+        }
+        
+        .rbc-month-row{
+            color:black;
+            .rbc-row-bg{
+                .rbc-day-bg{
+                    
+                    border:0.5px solid $font-grey;
+                }
+            }
+        }
+
+        .rbc-time-content{
+            border:1px solid black
+
+        }
+
+        .rbc-toolbar-label{
+            color:$font-dark;
+        }
+
+        .rbc-header{
+            color:black;
+        }
+    }
+    .ui.button{
+        border-radius: 0;
+        width: 96%;
+        box-sizing:content-box;
+        margin-bottom: 10px;
+    }
+}

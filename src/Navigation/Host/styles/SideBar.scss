@@ -1,0 +1,52 @@
+@import '../../../shared/scss/index.scss';
+
+.three.wide.column{
+    background-color:#E6E6EA;
+}
+
+.ui.vertical.menu {
+    width: 100% !important;
+    padding-top: 22vh !important;
+    height: 100vh !important;
+
+;
+}
+
+.ui.vertical.menu-left{
+    border-top: 10px $primary-color solid;
+    display:flex;
+    justify-content: space-between !important;
+    border-radius: 0;
+    background-color: $background-light;
+    height:auto;
+    padding-top:400px;
+    width:100%;
+    padding-top: 50px;
+    position: relative;
+    z-index: 1;
+
+    .item,
+    a.item{
+        color: $font-dark;
+        font-weight: bold;
+        font-size: 16px;
+        border-left: 4px solid transparent;
+        width: 100%;
+
+        &:hover,
+        &.active{
+            color: $primary-color !important;
+            background-color: transparent !important;
+            cursor: pointer;
+        }
+
+        &.active{
+            border-color: $primary-color;
+        }
+    }
+
+   
+
+
+
+}
