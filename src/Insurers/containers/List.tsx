@@ -20,14 +20,18 @@ export function List() {
         <thead>
           <tr>
             <th>Nombre</th>
+            <th>Email</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {insurers.map((insurer, i) =>
           <tr key={i}>
-            <td data-label="nombre completo">
+            <td data-label="nombre">
               {insurer.nombre}
+            </td>
+            <td data-label="email">
+              {insurer.email}
             </td>
             <td data-label="acciones">
               <Button

@@ -37,7 +37,7 @@ export function AppointmentNewForm(props) {
     const [exams, setExams] = useState(null);
     const [examSelected, setExamSelected] = useState("");
     const [ insurers, setInsurers ] = React.useState([]);
-    const [ patientInsurerName, setPacientInsurerName ] = React.useState('');
+    const [ patientInsurer, setPatientInsurer ] = React.useState(null);
 
     React.useEffect(() => {
       (async () => {
@@ -64,8 +64,8 @@ export function AppointmentNewForm(props) {
     }, [paciente])
 
     useEffect(() => {
-        setPacientInsurerName(
-            patientsHelpers.getPatientInsurerName(paciente, insurers)
+        setPatientInsurer(
+            patientsHelpers.getPatientInsurer(paciente, insurers)
         );
     }, [paciente, insurers]);
     
@@ -169,19 +169,17 @@ export function AppointmentNewForm(props) {
             </div>
 
             <div className="two-columns">
-            
-            <Form.Field>
-                <div>Nombre y apellido: {paciente?.nombre} {paciente?.apellido}</div> 
-                
+                <Form.Field>
+                    <div>
+                        Nombre y apellido: {paciente?.nombre} {paciente?.apellido}
+                    </div> 
+                </Form.Field>
 
-            </Form.Field>
-            <Form.Field>
-                <div>Obra social: {patientInsurerName}</div> 
-                
-
-            </Form.Field>
-
-            
+                <Form.Field>
+                    <div>
+                        Obra social: {patientInsurer ? patientInsurer.nombre : ''}
+                    </div> 
+                </Form.Field>
             </div>
             
             <div className="three-columns">

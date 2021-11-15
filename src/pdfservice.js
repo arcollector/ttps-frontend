@@ -17,7 +17,7 @@ const pdfService = {
 
     sendUsingSendgrid(to, subject, content) {
         const apiUrl = `${BACKEND_URL}/pdf/enviar-email`;
-        http.post(
+        return http.post(
             apiUrl,
             {to, subject, content}
         );
@@ -25,4 +25,3 @@ const pdfService = {
 };
 
 export default pdfService;
-;

@@ -35,6 +35,7 @@ describe('<Form />', () => {
 
   function fillFormFields(fields: Partial<Insurer>) {
     typeof fields.nombre !== 'undefined' && triggerChange('textbox', 'Nombre de la obra social', fields.nombre);
+    typeof fields.email !== 'undefined' && triggerChange('textbox', 'Correo Electronico', fields.email);
   }
 
   describe('should mount initially using props.values as values for each form field', () => {

@@ -151,7 +151,6 @@ export function Form(props: Props) {
         onChange={onChange}
         value={formData.email}
         validator={validators.email}
-        required
       />
 
       <FormDropdown

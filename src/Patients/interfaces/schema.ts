@@ -9,7 +9,7 @@ export const schema = yup.object().shape({
   email: yup
     .string()
     .email('Email ingresado es invalido')
-    .required('Email no puede estar vacio'),
+    .optional(),
 
   idInsurer: yup
     .string()
