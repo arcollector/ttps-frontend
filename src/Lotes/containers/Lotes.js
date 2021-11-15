@@ -6,13 +6,15 @@ import 'firebase/compat/firestore';
 
 
 import '../styles/lotes.scss';
+import CargarResultado from './CargarResultado';
 
 const db= firebase.firestore(firebase);
 
-export function Lotes() {
+export function Lotes(props) {
 
-
+    const {user}=props;
     const [lotes, setLotes] = useState(null);
+    const [reloading, setReloading] = useState(false);
 
     useEffect(() => {
         const refLotes= db.collection("lotes");
@@ -36,11 +38,9 @@ export function Lotes() {
         return () => {
             
         }
-    }, [])
+    }, [reloading])
 
-    console.log(lotes);
-
-console.log("hola");
+ 
 
     return  ( 
             <>
@@ -57,12 +57,12 @@ console.log("hola");
 
                                                 return(
                                                     
-                                                <div className="section-state">
+                                                <div key={id} className="section-state">
                                                     
                                                     <div className="contenedor-tarjeta">
                                                         <div className="ui card">
                                                                 
-                                                                    <div className="header">{`Lote ${id}`}</div>
+                                                                    <div className="header">{`Lote ${lote.numLote}`}</div>
                                                                 
                                                                 
                                                                 <div className="content">
@@ -75,7 +75,7 @@ console.log("hola");
                                                                     </ol>
                                                                 </div>
 
-                                                                {lote.state==="esperandoResultado" && <button  className="ui button" >Cargar resultado</button>}
+                                                                {lote.state==="esperandoResultado" && <CargarResultado lote={lote} user={user} setReloading={setReloading}/>}
                                                                 
                                                         </div>
                                                         

@@ -24,7 +24,7 @@ export function Routes(props) {
             </Route>
 
             <Route path="/lotes" exact>
-                <Lotes />
+                <Lotes user={user}/>
             </Route>
 
             <Route path="/pacientes" exact>

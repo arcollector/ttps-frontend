@@ -36,7 +36,7 @@ export default function Exam() {
         let estados=[];
         let muestra;
         let turno;
-        let consentimiento;
+        
         var refMedicExam = db.collection('medicExams').doc(examId);
         refMedicExam.get().then(doc=>{
             examen=(doc.data());
@@ -97,8 +97,8 @@ export default function Exam() {
                     });
                 }
             });
-            var refState= db.collection('states').doc(examen.idState);
-            refState.get().then(doc=>{
+            var refState2= db.collection('states').doc(examen.idState);
+            refState2.get().then(doc=>{
                 estado=(doc.data());
                 setState(estado);
             });

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import '../styles/SideBar.scss';
 import {Menu, Icon} from 'semantic-ui-react';
-import {Link, withRouter, Router} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
 //import {isUserAdmin} from '../../utils/Api';
 import { Modal } from '../../../shared/components/Modal';
