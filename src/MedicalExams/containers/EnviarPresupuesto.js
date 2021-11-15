@@ -22,7 +22,7 @@ export default function EnviarPresupuesto(props) {
 
 
     const handlerClick = () => {
-        const targetEmail = patient.email || (patientInsurer ? patientInsurer.email : null);
+        const targetEmail = patientInsurer ? patientInsurer.email : patient.email;
         if (targetEmail) {
             storage
                 .ref(`presupuestosPdf/${exam.id}.pdf`)

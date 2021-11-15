@@ -263,7 +263,7 @@ export function MedicalExams(props) {
                                     patients &&
                                     <EnviarPresupuesto
                                         patient={patients[exam.idPatient]}
-                                        patientInsurer={insurers[exam.idPatient] || null}
+                                        patientInsurer={patients[exam.idPatient] ? insurers[patients[exam.idPatient].idInsurer] : null}
                                         user={user}
                                         exam={exam}
                                         setReloading={setReloading}
