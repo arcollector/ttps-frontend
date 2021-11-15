@@ -38,7 +38,7 @@ export function MedicalExamNewForm(props) {
     const [doctorSelected, setDoctorSelected] = useState("");
     const [ insurers, setInsurers ] = React.useState([]);
     const [ patientInsurer, setPatientInsurer ] = React.useState(null);
-    const [selected, setSelected] = useState("exoma");
+    const [selected, setSelected] = useState("");
 
     React.useEffect(() => {
         (async () => {
