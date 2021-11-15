@@ -147,6 +147,11 @@ export function SideBarImpl(props) {
                         <Icon name="database"/>
                         Obra sociales  
                     </Menu.Item>
+
+                    <Menu.Item as={Link} to="/reportes">
+                        <Icon name="chart bar" />
+                        Reportes
+                    </Menu.Item>
                 </div>
             </Menu>
 
