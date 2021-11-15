@@ -180,6 +180,7 @@ export function MedicalExams(props) {
                 <option value="esperandoTomaDeMuestra">Estudios sin toma de muestra</option>
                 <option value="esperandoRetiroDeMuestra">Estudios con muestra sin retirar</option>
                 <option value="esperandoLote">Estudios esperando lote</option>
+                <option value="esperandoInterpretacion">Estudios esperando interpretacion de resultados</option>
                 
                 
             </select>
@@ -199,6 +200,7 @@ export function MedicalExams(props) {
                       {exams==="esperandoTomaDeMuestra" &&  filterStates[exams].length>0 && (viewFilter.estado==="esperandoTomaDeMuestra"||viewFilter.estado==="todos") &&<h3>Estudios a la espera de la toma de muestra </h3>}
                       {exams==="esperandoRetiroDeMuestra" &&  filterStates[exams].length>0 && (viewFilter.estado==="esperandoRetiroDeMuestra"||viewFilter.estado==="todos") && <h3>Estudios a la espera del retiro de muestra </h3>}
                       {exams==="esperandoLote" &&  filterStates[exams].length>0 && (viewFilter.estado==="esperandoLote"||viewFilter.estado==="todos") && <h3>Estudios a la espera de lote de muestras </h3>}
+                      {exams==="esperandoLote" &&  filterStates[exams].length>0 && (viewFilter.estado==="esperandoLote"||viewFilter.estado==="todos") && <h3>Estudios a la espera de interpretacion de resultados </h3>}
 
                     <div className="section-state">
 
@@ -254,6 +256,7 @@ export function MedicalExams(props) {
                                                         {exams==="esperandoTurno" && <ReservarTurno user={user} exam={exam} setReloading={setReloading}/>}
                                                         {exams==="esperandoTomaDeMuestra" && <TomarMuestra user={user} exam={exam} setReloading={setReloading}/>}
                                                         {exams==="esperandoRetiroDeMuestra" && <RetirarMuestra user={user} exam={exam} setReloading={setReloading}/>}
+                                                        {exams==="esperandoInterpretacion" && <button className="ui button">Cargar interpretacion</button>}
                                                         
                                                 </div>
                                                 
