@@ -8,6 +8,7 @@ import 'firebase/compat/firestore';
 
 
 import pdfService from '../../pdfservice';
+import { BACKEND_URL } from '../../httpservices'
 
 import examen from '../assets/virus1.jpg'
 import examen2 from '../assets/virus2.jpg'
@@ -181,7 +182,10 @@ export function MedicalExamNewForm(props) {
 
     const MyDocument=async(idMedicExam)=>{
         try{
-            pdfService.downloadPDF(`http://localhost:8080/pdf/informe?usuario=${paciente.nombre}`, paciente).then((res)=>{
+            pdfService.downloadPDF(
+                `${BACKEND_URL}/pdf/informe?usuario=${paciente.nombre}`,
+                paciente
+            ).then((res)=>{
 
                 //var file = new File([myBlob], "name");
                 console.log(res);

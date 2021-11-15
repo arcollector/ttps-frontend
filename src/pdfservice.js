@@ -1,8 +1,8 @@
-import http from './httpservices';
+import http, { BACKEND_URL } from './httpservices';
 
 const pdfService = {
     downloadPDF:function(webURL,paciente){
-        const apiURL=`http://localhost:8080/api/pdf/getpdf`;
+        const apiURL=`${BACKEND_URL}/api/pdf/getpdf`;
         console.log(webURL);
         console.log(paciente);
         return http.get(apiURL,{
@@ -16,7 +16,7 @@ const pdfService = {
     },
 
     sendUsingSendgrid(to, subject, content) {
-        const apiUrl = 'http://localhost:8080/pdf/enviar-email';
+        const apiUrl = `${BACKEND_URL}/pdf/enviar-email`;
         http.post(
             apiUrl,
             {to, subject, content}
@@ -25,3 +25,4 @@ const pdfService = {
 };
 
 export default pdfService;
+;
