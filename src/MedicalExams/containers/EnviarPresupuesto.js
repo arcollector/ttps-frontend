@@ -9,25 +9,40 @@ import pdfService from '../../pdfservice';
 const db= firebase.firestore(firebase);
 
 export default function EnviarPresupuesto(props) {
-
-   
-    const {exam, user, setReloading}= props;
+    const {
+        exam,
+        user,
+        patient,
+        patientInsurer,
+        setReloading,
+    } = props;
 
     var storage = firebase.storage();
     
 
 
-    const handlerClick=()=>{
-        storage.ref(`presupuestosPdf/${exam.id}.pdf`).getDownloadURL().then(url=>{
-            const html=`<p>Acceda a esta direccion para descargar el presupuesto de su estudio medico ${url}</p>`;
-            console.log(1, url)
-            pdfService.sendUsingSendgrid(
-                // TODO emial del paciente, este es el from
-                'juancrujca@gmail.com',
-                'Presupuesto del estudio medico',
-                html
-            );
-        })
+    const handlerClick = () => {
+        const targetEmail = patientInsurer ? patientInsurer.email : patient.email;
+        if (targetEmail) {
+            storage
+                .ref(`presupuestosPdf/${exam.id}.pdf`)
+                .getDownloadURL()
+                .then((url) => {
+                    const html = `<p>Acceda a esta direccion para descargar el presupuesto de su estudio medico ${url}</p>`;
+                    return pdfService.sendUsingSendgrid(
+                        targetEmail,
+                        'Presupuesto del estudio medico',
+                        html
+                    );
+                })
+                .catch((e) => {
+                    console.error(e);
+                    toast.error(`Fallo el envio del pdf ${exam.id} al email del paciente ${patient.email}`);
+                });
+        } else {
+            toast.error('Obra social del paciente no tiene configurado el correo electronico');
+        }
+
         saveState("esperandoComprobante", user.displayName, exam.id).then(idState=>{
             console.log(exam.id);
             var refMedicExam = db.collection('medicExams').doc(exam.id);
@@ -38,10 +53,7 @@ export default function EnviarPresupuesto(props) {
                 toast.success("El presupuesto fue enviado");
             });
         });
-
-        
-
-    }
+    };
 
 
     return (

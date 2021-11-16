@@ -37,8 +37,8 @@ export function MedicalExamNewForm(props) {
     const [prices, setPrices] = useState(null);
     const [doctorSelected, setDoctorSelected] = useState("");
     const [ insurers, setInsurers ] = React.useState([]);
-    const [ patientInsurerName, setPacientInsurerName ] = React.useState('');
-    const [selected, setSelected] = useState("exoma");
+    const [ patientInsurer, setPatientInsurer ] = React.useState(null);
+    const [selected, setSelected] = useState("");
 
     React.useEffect(() => {
         (async () => {
@@ -306,8 +306,8 @@ export function MedicalExamNewForm(props) {
     };
 
     useEffect(() => {
-        setPacientInsurerName(
-            patientsHelpers.getPatientInsurerName(paciente, insurers)
+        setPatientInsurer(
+            patientsHelpers.getPatientInsurer(paciente, insurers)
         );
     }, [paciente, insurers]);
 
@@ -363,24 +363,32 @@ export function MedicalExamNewForm(props) {
 
             </Form.Field>
 
-            <Form.Field>
-                <div>Nombre de la obra social:</div> 
-                <Input
-                    name="nomsoc"
-                    disabled={true}
-                    value={patientInsurerName}
-                    placerholder="nomsoc"
-                />
-            </Form.Field>
-            
-            <Form.Field>
-                <div>Numero de la obra social:</div> 
-                <Input
-                    name="numsoc" 
-                    disabled={true}
-                    value={paciente?.numsoc} placerholder="numsoc"
-                />
-            </Form.Field>
+            {patientInsurer ?
+            <>
+                <Form.Field>
+                    <div>Nombre de la obra social:</div> 
+                    <Input
+                        name="nomsoc"
+                        disabled={true}
+                        value={patientInsurer ? patientInsurer.nombre : ''}
+                        placerholder="nomsoc"
+                    />
+                </Form.Field>
+                
+                <Form.Field>
+                    <div>Numero de la obra social:</div> 
+                    <Input
+                        name="numsoc" 
+                        disabled={true}
+                        value={paciente?.numsoc} placerholder="numsoc"
+                    />
+                </Form.Field>
+            </>
+            :
+            <div style={{textAlign: 'center'}}>
+                <strong>Este paciente no tiene obra social</strong>
+            </div>
+            }
 
             <div className="header-section">
                 <h4>Datos del estudio</h4>

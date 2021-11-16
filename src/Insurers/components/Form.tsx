@@ -3,6 +3,7 @@ import * as SemanticUi from 'semantic-ui-react';
 import * as yup from 'yup';
 
 import { FormTextArea } from '../../shared/components/FormTextArea';
+import { FormInput } from '../../shared/components/FormInput';
 import { Insurer, emptyInsurer } from '../interfaces/types';
 import { validators, schema } from '../interfaces';
 
@@ -56,6 +57,17 @@ export function Form(props: Props) {
         onChange={onChange}
         value={formData.nombre}
         validator={validators.nombre}
+        required
+      />
+
+      <FormInput
+        label="Correo Electronico"
+        name="email"
+        placeholder="Correo Electronico de la obra social"
+        type="email"
+        onChange={onChange}
+        value={formData.email}
+        validator={validators.email}
         required
       />
 

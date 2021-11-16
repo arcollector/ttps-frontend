@@ -41,6 +41,7 @@ describe('<Create />', () => {
     test('creation of patient was successful', async () => {
       Testing.render(getComponentForTesting());
       fillForm('textbox', 'Nombre de la obra social', insurerRecentlyCreated.nombre);
+      fillForm('textbox', 'Correo Electronico', insurerRecentlyCreated.email);
       Testing.fireEvent.submit(Testing.screen.getByRole('button', { name: 'Crear obra social' }));
       await Testing.waitFor(() => {
         expect(spyOnInsurerCreate).toBeCalledWith(insurerRecentlyCreated);

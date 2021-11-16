@@ -49,6 +49,9 @@ export function Form(props: Props) {
   const [ numSocDisabled, setNumSocDisabled ] = React.useState(
     props.values?.idInsurer === ''
   );
+  React.useEffect(() => {
+    setNumSocDisabled(props.values?.idInsurer === '');
+  }, [props.values?.idInsurer]);
 
   const onChangeInsurer = (_: string, item: Item | null) => {
     if (!item) {
