@@ -16,6 +16,8 @@ import ReservarTurno from './ReservarTurno';
 import TomarMuestra from './TomarMuestra';
 import RetirarMuestra from './RetirarMuestra';
 import { actions as insurersActions } from '../../Insurers';
+import CargarInterpretacion from './CargarInterpretacion';
+import EnviarResultado from './EnviarResultado';
 
 
 const db= firebase.firestore(firebase);
@@ -178,6 +180,7 @@ export function MedicalExams(props) {
             <option value="esperandoRetiroDeMuestra">Estudios con muestra sin retirar</option>
             <option value="esperandoLote">Estudios esperando lote</option>
             <option value="esperandoInterpretacion">Estudios esperando interpretacion de resultados</option>
+            <option value="resultadoEntregado">Estudios con interpretacion de resultados</option>
         </select>
 
         {filterStates &&
@@ -227,6 +230,11 @@ export function MedicalExams(props) {
                 filterStates[exams].length>0 &&
                 (viewFilter.estado==="esperandoInterpretacion"||viewFilter.estado==="todos") &&
                 <h3>Estudios a la espera de interpretacion de resultados </h3>}
+
+                {exams==="resultadoEntregado" &&
+                filterStates[exams].length>0 &&
+                (viewFilter.estado==="resultadoEntregado"||viewFilter.estado==="todos") &&
+                <h3>Estudios que requieren envio de resultado a medico derivante </h3>}
 
                 <div className="section-state">
                     {filterStates[exams].map((exam, i) =>
@@ -294,7 +302,11 @@ export function MedicalExams(props) {
                                     {exams==="esperandoRetiroDeMuestra" &&
                                     <RetirarMuestra user={user} exam={exam} setReloading={setReloading}/>}
 
-                                    {exams==="esperandoInterpretacion" && <button className="ui button">Cargar interpretacion</button>}
+                                    {exams==="esperandoInterpretacion" && 
+                                    <CargarInterpretacion user={user} exam={exam} setReloading={setReloading} />}
+
+                                    {exams==="resultadoEntregado" && 
+                                    <EnviarResultado user={user} exam={exam} setReloading={setReloading}/>}
                                 </div>
                             </div>}
                         </Fragment>
