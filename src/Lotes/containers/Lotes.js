@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Icon, Button } from 'semantic-ui-react';
 
 import firebase from '../../shared/utils/Firebase';
 import 'firebase/compat/storage';
@@ -62,7 +64,19 @@ export function Lotes(props) {
                                                     <div className="contenedor-tarjeta">
                                                         <div className="ui card">
                                                                 
-                                                                    <div className="header">{`Lote ${lote.numLote}`}</div>
+                                                                    <div className="header">{`Lote ${lote.numLote}`}
+                                                                    
+                                                                    <Button
+                                                                        as={Link}
+                                                                        primary
+                                                                        size="mini"
+                                                                        to={`/lote/${lote.id}`}
+                                                                    >
+                                                                        <Icon name="eye" />
+                                                                        Ver Detalles
+                                                                    </Button>
+                                                                    
+                                                                    </div>
                                                                 
                                                                 
                                                                 <div className="content">

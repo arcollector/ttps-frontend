@@ -113,7 +113,7 @@ export default function Exam() {
     }, [])
 
 
-console.log(sample);
+
 
 
     return (
