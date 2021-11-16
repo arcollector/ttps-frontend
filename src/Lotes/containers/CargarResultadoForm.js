@@ -36,7 +36,7 @@ export default function CargarResultadoForm(props) {
             console.log(formData);
             refLote.update({
                 state:"finalizado",
-                url:formData.url,
+                urlResultado:formData.url,
                 fechaResultado:fechaCompleta,
                 userResultado:user.displayName,
             }).then(e=>{

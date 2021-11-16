@@ -46,7 +46,7 @@ export default function Lote() {
                     {lote&&<p><a  href={`/exam/${lote?.idMedicExam1}`}  >Estudio 1</a></p>}
                     {lote&&<p><a  href={`/exam/${lote?.idMedicExam2}`}  >Estudio 2</a></p>}
 
-                    {lote.url!==""&&<p><strong>Resultado url: </strong><a target="_blank" href={lote.url}>ver resultado</a> <strong>Fecha del resultado: </strong><i>{lote.fechaResultado}</i>  <strong>Realizado por: </strong><i>{lote.userResultado}</i></p>}
+                    {lote?.urlResultado!==""&&<p><strong>Resultado url: </strong><a target="_blank" href={lote?.urlResultado}>ver resultado</a> <strong>Fecha del resultado: </strong><i>{lote?.fechaResultado}</i>  <strong>Realizado por: </strong><i>{lote?.userResultado}</i></p>}
                     
                     
                 </div>
