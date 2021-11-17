@@ -158,7 +158,11 @@ export function SideBarImpl(props) {
                         Agregar Nuevo Paciente
                     </Menu.Item>
 
-                   
+                    <Menu.Item as={Link} to="/reportes">
+                        <Icon name="chart bar" />
+                        Reportes
+                    </Menu.Item>
+
                 </div>
             </Menu>
 

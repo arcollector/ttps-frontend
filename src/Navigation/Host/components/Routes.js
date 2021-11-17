@@ -6,8 +6,10 @@ import { Patients } from '../../../Patients';
 import { Lotes } from '../../../Lotes';
 import { Insurers } from '../../../Insurers';
 import Exam from '../../../MedicalExams/containers/Exam';
+import { Charts } from '../../../Charts';
 import Lote from '../../../Lotes/containers/Lote';
 import Payment from '../../../Payments/containers/Payment';
+
 
 export function Routes(props) {
     const {user}=props
@@ -55,6 +57,10 @@ export function Routes(props) {
             </Route>
             <Route path="/obra-sociales/:id" exact>
                 <Insurers.Single />
+            </Route>
+
+            <Route path="/reportes" exact>
+                <Charts />
             </Route>
         </Switch>
     );
