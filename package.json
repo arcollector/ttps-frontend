@@ -4,10 +4,13 @@
   "private": true,
   "dependencies": {
     "axios": "^0.22.0",
+    "chart.js": "^3.6.0",
     "firebase": "^9.1.2",
     "moment": "^2.29.1",
+    "nodemon": "^2.0.15",
     "react": "^17.0.2",
     "react-big-calendar": "^0.36.1",
+    "react-chartjs-2": "^3.3.0",
     "react-datetime-picker": "^3.4.2",
     "react-dom": "^17.0.2",
     "react-dropzone": "^11.4.2",
