@@ -98,7 +98,7 @@ export function Lotes(props) {
                                                                 </div>
 
                                                                 {lote.state==="esperandoResultado" && <CargarResultado lote={lote} user={user} setReloading={setReloading}/>}
-                                                                {lote.state==="finalizado" && <h3 class="end">FINALIZADO</h3>}
+                                                                {lote.state==="finalizado" && <h3 className="end">FINALIZADO</h3>}
                                                                 
                                                         </div>
                                                         
