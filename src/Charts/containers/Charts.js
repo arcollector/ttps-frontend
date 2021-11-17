@@ -19,8 +19,6 @@ export function Charts() {
   const [cantArray, setArray] = useState(null);
 
   useEffect(() => {
-    const refStates = db.collection("states");
-
     const refMedicExams = db.collection("medicExams");
     refMedicExams.get().then(doc => {
       let sumExoma = 0;
@@ -144,9 +142,6 @@ export function Charts() {
     }
   }, [])
 
-  console.log("años: ", tiemposAño);
-  console.log("dias: ", tiemposDia);
-
   const dataTiempos = {
     labels: tiemposAño,
     datasets: [
@@ -168,6 +163,72 @@ export function Charts() {
     }
   };
 
+  // gráfico de barras vertical de Cantidad de estudios por mes
+
+  const [cantEstudios, setCantEstudios] = useState(null);
+  const [mesEstudios, setMesEstudios] = useState(null);
+
+  useEffect(() => {
+    const refMedicExams = db.collection("medicExams");
+    refMedicExams.get().then(doc => {
+      let estudiosMes = {};
+      if (!doc.empty) {
+        doc.docs.map((docActual) => {
+          if (estudiosMes[docActual.data().month]) {
+            estudiosMes[docActual.data().month]++;
+          } else {
+            estudiosMes[docActual.data().month] = 1;
+          }
+          return {}
+        })
+        setCantEstudios(Object.values(estudiosMes));
+        setMesEstudios(Object.keys(estudiosMes));
+      }
+    })
+    return () => {
+
+    }
+  }, []);
+
+  const dataEstudiosMes = {
+    labels: mesEstudios,
+    datasets: [
+      {
+        label: '# de estudios',
+        data: cantEstudios,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+        ],
+        borderColor: [
+          'rgba(255, 99, 132, 1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+        ],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const optionsEstudiosMes = {
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
+  };
+
   return (
     <>
       <div class="ui container">
@@ -184,7 +245,12 @@ export function Charts() {
             </div>
             <Line data={dataTiempos} options={optionsTiempo} />
           </div>
-          <div class="ui segment">Tercer grafico</div>
+          <div class="ui segment">
+            <div className='header'>
+              <h1 className='title'>Cantidad de estudios por mes</h1>
+            </div>
+            <Bar data={dataEstudiosMes} options={optionsEstudiosMes} />
+          </div>
         </div>
       </div>
     </>
