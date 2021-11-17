@@ -310,7 +310,7 @@ export function MedicalExams(props) {
                                     {exams==="resultadoEntregado" && 
                                     <EnviarResultado user={user} exam={exam} setReloading={setReloading}/>}
 
-                                    {exams==="finalizado" &&  <h3 class="end">FINALIZADO</h3>}
+                                    {exams==="finalizado" &&  <h3 className="end">FINALIZADO</h3>}
                                 </div>
                             </div>}
                         </Fragment>
