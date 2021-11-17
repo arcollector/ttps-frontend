@@ -84,8 +84,16 @@ export function Lotes(props) {
                                                                    
                                                                     <h4 className="ui sub header">Examenes medicos:</h4>
                                                                     <ol className="ui list">
-                                                                        <li key={lote.idMedicExam1} >{lote.idMedicExam1}</li>
-                                                                        <li key={lote.idMedicExam2} >{lote.idMedicExam2}</li>
+                                                                        <li key={lote.idMedicExam1} ><a href={`/exam/${lote?.idMedicExam1}`}>Estudio 1</a></li>
+                                                                        <li key={lote.idMedicExam2} ><a href={`/exam/${lote?.idMedicExam2}`}>Estudio 2</a></li>
+                                                                        <li key={lote.idMedicExam3} ><a href={`/exam/${lote?.idMedicExam3}`}>Estudio 3</a></li>
+                                                                        <li key={lote.idMedicExam4} ><a href={`/exam/${lote?.idMedicExam4}`}>Estudio 4</a></li>
+                                                                        <li key={lote.idMedicExam5} ><a href={`/exam/${lote?.idMedicExam5}`}>Estudio 5</a></li>
+                                                                        <li key={lote.idMedicExam6} ><a href={`/exam/${lote?.idMedicExam6}`}>Estudio 6</a></li>
+                                                                        <li key={lote.idMedicExam7} ><a href={`/exam/${lote?.idMedicExam7}`}>Estudio 7</a></li>
+                                                                        <li key={lote.idMedicExam8} ><a href={`/exam/${lote?.idMedicExam8}`}>Estudio 8</a></li>
+                                                                        <li key={lote.idMedicExam9} ><a href={`/exam/${lote?.idMedicExam9}`}>Estudio 9</a></li>
+                                                                        <li key={lote.idMedicExam10} ><a href={`/exam/${lote?.idMedicExam10}`}>Estudio 10</a></li>
                                                                     </ol>
                                                                 </div>
 

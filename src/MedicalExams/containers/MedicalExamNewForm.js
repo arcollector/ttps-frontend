@@ -134,6 +134,7 @@ export function MedicalExamNewForm(props) {
                                 year:year,
                                 idState:"",
                                 pago:false,
+                                extraccion:false,
 
     
     

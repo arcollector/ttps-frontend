@@ -52,7 +52,9 @@ export default function TomarMuestraForm(props) {
     }
 
     const onSubmit=()=>{
+        
         if(formData.cantml!== 0 && formData.freezer!== 0 && !error){
+            setIsLoading(true);
             db.collection("medicalSamples").add({
                 idMedicExam:exam.id,
                 cantMl:formData.cantml,
@@ -63,9 +65,11 @@ export default function TomarMuestraForm(props) {
                     console.log(exam.id);
                     var refMedicExam = db.collection('medicExams').doc(exam.id);
                     refMedicExam.update({
-                        idState:idState
+                        idState:idState,
+                        extraccion:true
                     }).then(() => {
                         setReloading((v) => !v);
+                        setIsLoading(false);
                         setShowModal(false);
                     });
                 });

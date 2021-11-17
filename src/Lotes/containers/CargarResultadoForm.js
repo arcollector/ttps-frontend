@@ -40,7 +40,7 @@ export default function CargarResultadoForm(props) {
                 fechaResultado:fechaCompleta,
                 userResultado:user.displayName,
             }).then(e=>{
-                for (var id = 1; id <= 2; id++) {
+                for (var id = 1; id <= 10; id++) {
 
                     
                     const refExam=db.collection('medicExams').doc(lote[`idMedicExam${id}`]);

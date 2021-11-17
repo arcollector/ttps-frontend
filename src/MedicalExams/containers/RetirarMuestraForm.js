@@ -53,7 +53,7 @@ export default function RetirarMuestraForm(props) {
                 });
                 const refDocs= db.collection('states').where("name","==","esperandoLote");
                 refDocs.get().then(result=>{
-                    if(result.docs.length===2){
+                    if(result.docs.length===10){
                         const arrayStates=[];
                         result.docs.map((docActual,i)=>{
                             const data=docActual.data();
@@ -69,6 +69,14 @@ export default function RetirarMuestraForm(props) {
                                 numLote:idLote+1,
                                 idMedicExam1:arrayStates[0].idMedicExam,
                                 idMedicExam2:arrayStates[1].idMedicExam,
+                                idMedicExam3:arrayStates[2].idMedicExam,
+                                idMedicExam4:arrayStates[3].idMedicExam,
+                                idMedicExam5:arrayStates[4].idMedicExam,
+                                idMedicExam6:arrayStates[5].idMedicExam,
+                                idMedicExam7:arrayStates[6].idMedicExam,
+                                idMedicExam8:arrayStates[7].idMedicExam,
+                                idMedicExam9:arrayStates[8].idMedicExam,
+                                idMedicExam10:arrayStates[9].idMedicExam,
                                 state:"esperandoResultado",
                                 urlResultado:""
                             }).then(e=>{

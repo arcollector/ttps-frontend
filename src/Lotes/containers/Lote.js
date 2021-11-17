@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import { useParams} from 'react-router-dom';
-import { Link } from 'react-router-dom';
 import firebase from '../../shared/utils/Firebase';
 import 'firebase/compat/storage';
 import 'firebase/compat/firestore';
@@ -45,6 +44,14 @@ export default function Lote() {
                     
                     {lote&&<p><a  href={`/exam/${lote?.idMedicExam1}`}  >Estudio 1</a></p>}
                     {lote&&<p><a  href={`/exam/${lote?.idMedicExam2}`}  >Estudio 2</a></p>}
+                    {lote&&<p><a  href={`/exam/${lote?.idMedicExam3}`}  >Estudio 3</a></p>}
+                    {lote&&<p><a  href={`/exam/${lote?.idMedicExam4}`}  >Estudio 4</a></p>}
+                    {lote&&<p><a  href={`/exam/${lote?.idMedicExam5}`}  >Estudio 5</a></p>}
+                    {lote&&<p><a  href={`/exam/${lote?.idMedicExam6}`}  >Estudio 6</a></p>}
+                    {lote&&<p><a  href={`/exam/${lote?.idMedicExam7}`}  >Estudio 7</a></p>}
+                    {lote&&<p><a  href={`/exam/${lote?.idMedicExam8}`}  >Estudio 8</a></p>}
+                    {lote&&<p><a  href={`/exam/${lote?.idMedicExam9}`}  >Estudio 9</a></p>}
+                    {lote&&<p><a  href={`/exam/${lote?.idMedicExam10}`}  >Estudio 10</a></p>}
 
                     {lote?.urlResultado!==""&&<p><strong>Resultado url: </strong><a target="_blank" href={lote?.urlResultado}>ver resultado</a> <strong>Fecha del resultado: </strong><i>{lote?.fechaResultado}</i>  <strong>Realizado por: </strong><i>{lote?.userResultado}</i></p>}
                     
