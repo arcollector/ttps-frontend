@@ -7,6 +7,7 @@ import { Lotes } from '../../../Lotes';
 import { Insurers } from '../../../Insurers';
 import Exam from '../../../MedicalExams/containers/Exam';
 import Lote from '../../../Lotes/containers/Lote';
+import Payment from '../../../Payments/containers/Payment';
 
 export function Routes(props) {
     const {user}=props
@@ -22,6 +23,10 @@ export function Routes(props) {
 
             <Route path="/turnos" exact>
                 <AppointmentsSchedule />
+            </Route>
+
+            <Route path="/pago" exact>
+                <Payment/>
             </Route>
 
             <Route path="/lotes" exact>

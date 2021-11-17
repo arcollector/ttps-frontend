@@ -265,11 +265,8 @@ export function MedicalExams(props) {
                                     <div className="content">
                                         <h4 className="ui sub header">Estudios</h4>
                                         <ol className="ui list">
-                                        {exam.arraySelected==="true"&&( <li value="*" key="array">Array</li>)}
-                                        {exam.genomaSelected==="true"&&( <li value="*"key="genoma">Genoma</li>)}
-                                        {exam.cariotipoSelected==="true"&&( <li value="*" key="cariotipo">Cariotipo</li>)}
-                                        {exam.exomaSelected==="true"&&( <li value="*" key="exoma">Exoma</li>)}
-                                        {exam.carrierSelected==="true"&&( <li value="*" key="carrier">Carrier</li>)}
+                                            <li value="*" key={exam.examSelected}>{exam.examSelected}</li>
+                                        
                                             
                                         </ol>
                                         <h4 className="ui sub header">Medico Derivante:</h4>
