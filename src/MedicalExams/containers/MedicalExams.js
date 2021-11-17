@@ -236,6 +236,11 @@ export function MedicalExams(props) {
                 (viewFilter.estado==="resultadoEntregado"||viewFilter.estado==="todos") &&
                 <h3>Estudios que requieren envio de resultado a medico derivante </h3>}
 
+                {exams==="finalizado" &&
+                filterStates[exams].length>0 &&
+                (viewFilter.estado==="finalizado"||viewFilter.estado==="todos") &&
+                <h3>Estudios finalizados </h3>}
+
                 <div className="section-state">
                     {filterStates[exams].map((exam, i) =>
                         <Fragment key={i}>
@@ -307,6 +312,8 @@ export function MedicalExams(props) {
 
                                     {exams==="resultadoEntregado" && 
                                     <EnviarResultado user={user} exam={exam} setReloading={setReloading}/>}
+
+                                    {exams==="finalizado" &&  <h3 class="end">FINALIZADO</h3>}
                                 </div>
                             </div>}
                         </Fragment>
