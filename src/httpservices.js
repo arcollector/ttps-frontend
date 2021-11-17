@@ -20,6 +20,8 @@ export default{
     post:axios.post,
 }
 
+console.log(process.env);
+
 const BACKEND_HOSTNAME = process.env.BACKEND_HOSTNAME || 'http://localhost';
 const BACKEND_PORT = process.env.BACKEND_PORT || '8080';
 export const BACKEND_URL = `${BACKEND_HOSTNAME}:${BACKEND_PORT}`;
