@@ -53,7 +53,7 @@ export default function RetirarMuestraForm(props) {
                 });
                 const refDocs= db.collection('states').where("name","==","esperandoLote");
                 refDocs.get().then(result=>{
-                    if(result.docs.length===10){
+                    if(result.docs.length>=10){
                         const arrayStates=[];
                         result.docs.map((docActual,i)=>{
                             const data=docActual.data();
@@ -61,6 +61,17 @@ export default function RetirarMuestraForm(props) {
                             arrayStates.push(data);
                             return{}
                         })
+                        for (var id = 0; id <= 9; id++) {
+
+                    
+                            const refExam=db.collection('medicExams').doc(arrayStates[id].idMedicExam);
+                            saveState("enLote", user.displayName, arrayStates[id].idMedicExam).then(idState=>{
+                                refExam.update({
+                                idState:idState
+                                })
+                            })
+                            
+                         }
                         console.log(arrayStates);
                         let refLotes=db.collection('lotes');
                         refLotes.get().then(result=>{
