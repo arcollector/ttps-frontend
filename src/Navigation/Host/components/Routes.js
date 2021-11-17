@@ -7,6 +7,9 @@ import { Lotes } from '../../../Lotes';
 import { Insurers } from '../../../Insurers';
 import Exam from '../../../MedicalExams/containers/Exam';
 import { Charts } from '../../../Charts';
+import Lote from '../../../Lotes/containers/Lote';
+import Payment from '../../../Payments/containers/Payment';
+
 
 export function Routes(props) {
     const {user}=props
@@ -24,8 +27,16 @@ export function Routes(props) {
                 <AppointmentsSchedule />
             </Route>
 
+            <Route path="/pago" exact>
+                <Payment/>
+            </Route>
+
             <Route path="/lotes" exact>
-                <Lotes />
+                <Lotes user={user}/>
+            </Route>
+
+            <Route path="/lote/:id" exact>
+                <Lote />
             </Route>
 
             <Route path="/pacientes" exact>

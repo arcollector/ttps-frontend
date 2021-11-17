@@ -7,7 +7,7 @@ const db= firebase.firestore(firebase);
 
 moment.locale('es');
 
-const now= moment().minutes(0).seconds(0);
+
 
 export default function saveState (state, nameEmployee, idMedicExam) {
 

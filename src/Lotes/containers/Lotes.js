@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { Icon, Button } from 'semantic-ui-react';
 
 import firebase from '../../shared/utils/Firebase';
 import 'firebase/compat/storage';
@@ -6,13 +8,15 @@ import 'firebase/compat/firestore';
 
 
 import '../styles/lotes.scss';
+import CargarResultado from './CargarResultado';
 
 const db= firebase.firestore(firebase);
 
-export function Lotes() {
+export function Lotes(props) {
 
-
+    const {user}=props;
     const [lotes, setLotes] = useState(null);
+    const [reloading, setReloading] = useState(false);
 
     useEffect(() => {
         const refLotes= db.collection("lotes");
@@ -36,11 +40,9 @@ export function Lotes() {
         return () => {
             
         }
-    }, [])
+    }, [reloading])
 
-    console.log(lotes);
-
-console.log("hola");
+ 
 
     return  ( 
             <>
@@ -57,12 +59,24 @@ console.log("hola");
 
                                                 return(
                                                     
-                                                <div className="section-state">
+                                                <div key={id} className="section-state">
                                                     
                                                     <div className="contenedor-tarjeta">
                                                         <div className="ui card">
                                                                 
-                                                                    <div className="header">{`Lote ${id}`}</div>
+                                                                    <div className="header">{`Lote ${lote.numLote}`}
+                                                                    
+                                                                    <Button
+                                                                        as={Link}
+                                                                        primary
+                                                                        size="mini"
+                                                                        to={`/lote/${lote.id}`}
+                                                                    >
+                                                                        <Icon name="eye" />
+                                                                        Ver Detalles
+                                                                    </Button>
+                                                                    
+                                                                    </div>
                                                                 
                                                                 
                                                                 <div className="content">
@@ -70,12 +84,21 @@ console.log("hola");
                                                                    
                                                                     <h4 className="ui sub header">Examenes medicos:</h4>
                                                                     <ol className="ui list">
-                                                                        <li key={lote.idMedicExam1} >{lote.idMedicExam1}</li>
-                                                                        <li key={lote.idMedicExam2} >{lote.idMedicExam2}</li>
+                                                                        <li key={lote.idMedicExam1} ><a href={`/exam/${lote?.idMedicExam1}`}>Estudio 1</a></li>
+                                                                        <li key={lote.idMedicExam2} ><a href={`/exam/${lote?.idMedicExam2}`}>Estudio 2</a></li>
+                                                                        <li key={lote.idMedicExam3} ><a href={`/exam/${lote?.idMedicExam3}`}>Estudio 3</a></li>
+                                                                        <li key={lote.idMedicExam4} ><a href={`/exam/${lote?.idMedicExam4}`}>Estudio 4</a></li>
+                                                                        <li key={lote.idMedicExam5} ><a href={`/exam/${lote?.idMedicExam5}`}>Estudio 5</a></li>
+                                                                        <li key={lote.idMedicExam6} ><a href={`/exam/${lote?.idMedicExam6}`}>Estudio 6</a></li>
+                                                                        <li key={lote.idMedicExam7} ><a href={`/exam/${lote?.idMedicExam7}`}>Estudio 7</a></li>
+                                                                        <li key={lote.idMedicExam8} ><a href={`/exam/${lote?.idMedicExam8}`}>Estudio 8</a></li>
+                                                                        <li key={lote.idMedicExam9} ><a href={`/exam/${lote?.idMedicExam9}`}>Estudio 9</a></li>
+                                                                        <li key={lote.idMedicExam10} ><a href={`/exam/${lote?.idMedicExam10}`}>Estudio 10</a></li>
                                                                     </ol>
                                                                 </div>
 
-                                                                {lote.state==="esperandoResultado" && <button  className="ui button" >Cargar resultado</button>}
+                                                                {lote.state==="esperandoResultado" && <CargarResultado lote={lote} user={user} setReloading={setReloading}/>}
+                                                                {lote.state==="finalizado" && <h3 className="end">FINALIZADO</h3>}
                                                                 
                                                         </div>
                                                         

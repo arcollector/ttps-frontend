@@ -26,6 +26,7 @@ export default function Exam() {
     const [shift, setShift] = useState([])
     const [urlConsentimiento, setUrlConsentimiento] = useState(null);
     const [urlComprobante, setUrlComprobante] = useState(null);
+    const [lote, setLote] = useState(null);
     
     useEffect(() => {
 
@@ -36,7 +37,8 @@ export default function Exam() {
         let estados=[];
         let muestra;
         let turno;
-        let consentimiento;
+        let loteAux;
+        
         var refMedicExam = db.collection('medicExams').doc(examId);
         refMedicExam.get().then(doc=>{
             examen=(doc.data());
@@ -96,9 +98,18 @@ export default function Exam() {
                         setUrlConsentimiento(url);
                     });
                 }
+                if(estados["esperandoRetiroDeMuestra"]!==undefined){
+                    var refLote= db.collection('lotes').doc(examen.idLote);
+                    refLote.get().then(doc=>{
+                     loteAux=doc.data();
+                     loteAux.id=doc.id;
+                     setLote(loteAux);
+                    
+                    });
+                }
             });
-            var refState= db.collection('states').doc(examen.idState);
-            refState.get().then(doc=>{
+            var refState2= db.collection('states').doc(examen.idState);
+            refState2.get().then(doc=>{
                 estado=(doc.data());
                 setState(estado);
             });
@@ -113,7 +124,7 @@ export default function Exam() {
     }, [])
 
 
-console.log(sample);
+
 
 
     return (
@@ -133,14 +144,15 @@ console.log(sample);
                         <p><strong>Estado actual del estudio: </strong><i>{state?.name} </i></p>
 
                     <h2>Historial:</h2> 
-                    {historial["enviarPresupuesto"]!==undefined&&<><h5>Creacion del estudio medico</h5><p><strong>Realizado por:</strong> {historial["enviarPresupuesto"]?.employee} <strong>  fecha: </strong>{historial["enviarPresupuesto"]?.day}-{historial["enviarPresupuesto"]?.month}-{historial["enviarPresupuesto"]?.year}</p></>}
-                    {historial["esperandoComprobante"]!==undefined&&<><h5>Envio de presupuesto</h5><p><strong>Realizado por:</strong> {historial["esperandoComprobante"]?.employee} <strong>  fecha: </strong>{historial["esperandoComprobante"]?.day}-{historial["esperandoComprobante"]?.month}-{historial["esperandoComprobante"]?.year}</p><p><strong>Precio: <i>{exam.price}</i></strong></p></>}
+                    {historial["enviarPresupuesto"]!==undefined&&<><h5>Creacion del estudio medico</h5><p><strong>Realizado por:</strong> {historial["enviarPresupuesto"]?.employee} <strong>  fecha: </strong><i>{historial["enviarPresupuesto"]?.day}-{historial["enviarPresupuesto"]?.month}-{historial["enviarPresupuesto"]?.year}</i></p></>}
+                    {historial["esperandoComprobante"]!==undefined&&<><h5>Envio de presupuesto</h5><p><strong>Realizado por:</strong> {historial["esperandoComprobante"]?.employee} <strong>  fecha: </strong>{historial["esperandoComprobante"]?.day}-{historial["esperandoComprobante"]?.month}-{historial["esperandoComprobante"]?.year}</p><p><strong>Precio: </strong>{exam.price}</p></>}
                     {historial["enviarConsentimiento"]!==undefined&&<><h5>Carga de comprobante de pago</h5><p><strong>Realizado por:</strong> {historial["enviarConsentimiento"]?.employee} <strong>  fecha: </strong>{historial["enviarConsentimiento"]?.day}-{historial["enviarConsentimiento"]?.month}-{historial["enviarConsentimiento"]?.year}</p><p><a target="_blank" href={urlComprobante}>Ver comprobante de pago</a></p></>}
                     {historial["esperandoConsentimiento"]!==undefined&&<><h5>Envio de consentimiento informado</h5><p><strong>Realizado por:</strong> {historial["esperandoConsentimiento"]?.employee} <strong>  fecha: </strong>{historial["esperandoConsentimiento"]?.day}-{historial["esperandoConsentimiento"]?.month}-{historial["esperandoConsentimiento"]?.year}</p></>}
                     {historial["esperandoTurno"]!==undefined&&<><h5>Carga de consentimiento informado</h5><p><strong>Realizado por:</strong> {historial["esperandoTurno"]?.employee} <strong>  fecha: </strong>{historial["esperandoTurno"]?.day}-{historial["esperandoTurno"]?.month}-{historial["esperandoTurno"]?.year}</p><p><a target="_blank" href={urlConsentimiento}>Ver consentimiento informado</a></p></>}
                     {historial["esperandoTomaDeMuestra"]!==undefined&&<><h5>Reserva de un turno</h5><p><strong>Realizado por:</strong> {historial["esperandoTomaDeMuestra"]?.employee} <strong>  fecha: </strong>{historial["esperandoTomaDeMuestra"]?.day}-{historial["esperandoTomaDeMuestra"]?.month}-{historial["esperandoTomaDeMuestra"]?.year}</p><p><strong>Fecha del turno: </strong> <i>{shift?.date}</i>   <strong>  Hora: </strong><i>{shift?.hour}</i></p></>}
                     {historial["esperandoLote"]!==undefined&&<><h5>Extraccion de la muestra</h5><p><strong>Realizado por:</strong> {historial["esperandoLote"]?.employee} <strong>  fecha: </strong>{historial["esperandoLote"]?.day}-{historial["esperandoLote"]?.month}-{historial["esperandoLote"]?.year}</p><p><strong>Cantidad de ml: </strong> <i>{sample?.cantMl}</i>   <strong>  Freezer: </strong><i>{sample?.freezer}</i></p></>}
-                    {historial["esperandoRetiroDeMuestra"]!==undefined&&<><h5>Conformacion del lote de muestras</h5><p><strong>Realizado por:</strong> {historial["esperandoRetiroDeMuestra"]?.employee} <strong>  fecha: </strong>{historial["esperandoRetiroDeMuestra"]?.day}-{historial["esperandoRetiroDeMuestra"]?.month}-{historial["esperandoRetiroDeMuestra"]?.year}</p></>}
+                    {historial["esperandoRetiroDeMuestra"]!==undefined&&<><h5>Conformacion del lote de muestras</h5><p><strong>Realizado por:</strong> {historial["esperandoRetiroDeMuestra"]?.employee} <strong>  fecha: </strong>{historial["esperandoRetiroDeMuestra"]?.day}-{historial["esperandoRetiroDeMuestra"]?.month}-{historial["esperandoRetiroDeMuestra"]?.year}</p><p><a href={`/lote/${lote?.id}`}>Ver lote</a></p></>}
+                    {historial["esperandoInterpretacion"]!==undefined&&lote?.urlResultado!==""&&<><h5>Llegada de resultados de la muestra</h5><p><strong>Realizado por:</strong> {lote?.userResultado} <strong>  fecha: </strong>{lote?.fechaResultado}</p><p><a href={lote?.urlResultado}>Ver Resultado</a></p></>}
                     
                       
                     </>

@@ -16,6 +16,8 @@ import ReservarTurno from './ReservarTurno';
 import TomarMuestra from './TomarMuestra';
 import RetirarMuestra from './RetirarMuestra';
 import { actions as insurersActions } from '../../Insurers';
+import CargarInterpretacion from './CargarInterpretacion';
+import EnviarResultado from './EnviarResultado';
 
 
 const db= firebase.firestore(firebase);
@@ -167,7 +169,7 @@ export function MedicalExams(props) {
     
     return (
         <div className="estudios-content">
-            <select name="estado" onChange={viewOnChange} multiple="" className="ui fluid dropdown">
+            <select name="estado" onChange={viewOnChange} className="ui fluid dropdown">
             <option value="todos">Todos</option>
             <option value="enviarPresupuesto">Estudios sin presupuesto enviado</option>
             <option value="esperandoComprobante">Estudios sin recibir comprobante de pago</option>
@@ -177,6 +179,8 @@ export function MedicalExams(props) {
             <option value="esperandoTomaDeMuestra">Estudios sin toma de muestra</option>
             <option value="esperandoRetiroDeMuestra">Estudios con muestra sin retirar</option>
             <option value="esperandoLote">Estudios esperando lote</option>
+            <option value="esperandoInterpretacion">Estudios esperando interpretacion de resultados</option>
+            <option value="resultadoEntregado">Estudios con interpretacion de resultados</option>
         </select>
 
         {filterStates &&
@@ -222,6 +226,21 @@ export function MedicalExams(props) {
                 (viewFilter.estado==="esperandoLote"||viewFilter.estado==="todos") &&
                 <h3>Estudios a la espera de lote de muestras </h3>}
 
+                {exams==="esperandoInterpretacion" &&
+                filterStates[exams].length>0 &&
+                (viewFilter.estado==="esperandoInterpretacion"||viewFilter.estado==="todos") &&
+                <h3>Estudios a la espera de interpretacion de resultados </h3>}
+
+                {exams==="resultadoEntregado" &&
+                filterStates[exams].length>0 &&
+                (viewFilter.estado==="resultadoEntregado"||viewFilter.estado==="todos") &&
+                <h3>Estudios que requieren envio de resultado a medico derivante </h3>}
+
+                {exams==="finalizado" &&
+                filterStates[exams].length>0 &&
+                (viewFilter.estado==="finalizado"||viewFilter.estado==="todos") &&
+                <h3>Estudios finalizados </h3>}
+
                 <div className="section-state">
                     {filterStates[exams].map((exam, i) =>
                         <Fragment key={i}>
@@ -246,11 +265,8 @@ export function MedicalExams(props) {
                                     <div className="content">
                                         <h4 className="ui sub header">Estudios</h4>
                                         <ol className="ui list">
-                                        {exam.arraySelected==="true"&&( <li value="*" key="array">Array</li>)}
-                                        {exam.genomaSelected==="true"&&( <li value="*"key="genoma">Genoma</li>)}
-                                        {exam.cariotipoSelected==="true"&&( <li value="*" key="cariotipo">Cariotipo</li>)}
-                                        {exam.exomaSelected==="true"&&( <li value="*" key="exoma">Exoma</li>)}
-                                        {exam.carrierSelected==="true"&&( <li value="*" key="carrier">Carrier</li>)}
+                                            <li value="*" key={exam.examSelected}>{exam.examSelected}</li>
+                                        
                                             
                                         </ol>
                                         <h4 className="ui sub header">Medico Derivante:</h4>
@@ -263,7 +279,7 @@ export function MedicalExams(props) {
                                     patients &&
                                     <EnviarPresupuesto
                                         patient={patients[exam.idPatient]}
-                                        patientInsurer={insurers[exam.idPatient] || null}
+                                        patientInsurer={patients[exam.idPatient] ? insurers[patients[exam.idPatient].idInsurer] : null}
                                         user={user}
                                         exam={exam}
                                         setReloading={setReloading}
@@ -287,6 +303,14 @@ export function MedicalExams(props) {
                                     
                                     {exams==="esperandoRetiroDeMuestra" &&
                                     <RetirarMuestra user={user} exam={exam} setReloading={setReloading}/>}
+
+                                    {exams==="esperandoInterpretacion" && 
+                                    <CargarInterpretacion user={user} exam={exam} setReloading={setReloading} />}
+
+                                    {exams==="resultadoEntregado" && 
+                                    <EnviarResultado user={user} exam={exam} setReloading={setReloading}/>}
+
+                                    {exams==="finalizado" &&  <h3 className="end">FINALIZADO</h3>}
                                 </div>
                             </div>}
                         </Fragment>
@@ -297,5 +321,3 @@ export function MedicalExams(props) {
         </div>
     )
 }
-
-

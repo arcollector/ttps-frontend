@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import '../styles/SideBar.scss';
 import {Menu, Icon} from 'semantic-ui-react';
-import {Link, withRouter, Router} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
 //import {isUserAdmin} from '../../utils/Api';
 import { Modal } from '../../../shared/components/Modal';
@@ -115,12 +115,30 @@ export function SideBarImpl(props) {
 
                     <Menu.Item 
                         as={Link} 
+                        to="/pago"
+                        active={activeMenu==="/pago"} 
+                        onClick={handlerMenu}
+                    >
+                        <Icon name="dollar sign"/>
+                        Pago de extracciones
+                    </Menu.Item>
+
+                    <Menu.Item 
+                        as={Link} 
                         to="/pacientes"
                         active={activeMenu==="/pacientes"} 
                         onClick={handlerMenu}
                     >
                         <Icon name="user outline"/>
                         Pacientes
+                    </Menu.Item>
+
+                    <Menu.Item
+                        as={Link}
+                        to="/obra-sociales"
+                    >
+                        <Icon name="database"/>
+                        Obra sociales  
                     </Menu.Item>
 
                     <Menu.Item
@@ -140,18 +158,11 @@ export function SideBarImpl(props) {
                         Agregar Nuevo Paciente
                     </Menu.Item>
 
-                    <Menu.Item
-                        as={Link}
-                        to="/obra-sociales"
-                    >
-                        <Icon name="database"/>
-                        Obra sociales  
-                    </Menu.Item>
-
                     <Menu.Item as={Link} to="/reportes">
                         <Icon name="chart bar" />
                         Reportes
                     </Menu.Item>
+
                 </div>
             </Menu>
 

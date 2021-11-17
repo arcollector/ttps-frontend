@@ -1,0 +1,33 @@
+
+
+.ui.inverted.segment{
+
+    .content{
+
+        .header{
+            display:inline;
+        }
+        .boton{
+            background-color: #2185d0;
+            color: #fff;
+            text-shadow: none;
+            background-image: none;
+            margin-top: 2px;
+            width: 100px !important;
+            text-align: center;
+            display:inline-block;
+            padding: 5px;
+            border-radius: 6px;
+            float:right;
+        }
+        .boton:hover{
+            cursor: pointer;
+        }
+
+
+    }
+
+}
+
+       
+    
