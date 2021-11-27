@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import firebase from '../../shared/utils/Firebase';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
 import { Bar } from 'react-chartjs-2';
 import { Line } from 'react-chartjs-2';
 import '../styles/charts.scss';
 import * as actions from '../actions';
-
-const db = firebase.firestore(firebase);
 
 export function Charts() {
 

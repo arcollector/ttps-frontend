@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, Button } from 'semantic-ui-react';
-
-import firebase from '../../shared/utils/Firebase';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
-
-
 import '../styles/lotes.scss';
 import CargarResultado from './CargarResultado';
-
-const db= firebase.firestore(firebase);
+import * as actions from '../actions';
 
 export function Lotes(props) {
 
@@ -19,27 +12,11 @@ export function Lotes(props) {
     const [reloading, setReloading] = useState(false);
 
     useEffect(() => {
-        const refLotes= db.collection("lotes");
-        refLotes.get().then(doc=>{
-            
-            let arrayLotes=[]; 
-            if(!doc.empty){
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    
-                    data.id=docActual.id;
-                    arrayLotes.push(data);
-                    return {}
-                    
-                })
-                setLotes(arrayLotes);
-               
-            }
-        })
-        return () => {
-            
-        }
+	(async () => {
+		setLotes(
+			await actions.getAllLotes()
+		);
+	})();
     }, [reloading])
 
  
