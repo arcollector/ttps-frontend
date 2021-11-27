@@ -7,9 +7,6 @@ import DatePicker from "react-widgets/DatePicker";
 import DropdownList from "react-widgets/DropdownList";
 import moment from 'moment';
 
-//BASE DE DATOS
-import { db } from '../../shared/utils/Firebase';
-
 //SCSS
 import '../styles/AppointmentNewForm.scss'
 import "react-widgets/scss/styles.scss";
@@ -69,12 +66,10 @@ export function AppointmentNewForm(props) {
         );
     }, [paciente, insurers]);
     
-    const onSubmit=()=>{
+    const onSubmit = async () => {
         if(reserved[formData.hour+formData.date]){
-            
             toast.warning('El turno elegido no esta disponible')
         }else{
-
             if(!paciente){
                 toast.warning('Debe ingresar el dni de un paciente');
             }
@@ -83,29 +78,27 @@ export function AppointmentNewForm(props) {
                         toast.warning('Debe seleccionar un estudio')
                     }else{
                         setIsLoading(true);
-                        
-                        db.collection("shifts").add({
-                            idMedicExam:examSelected,
-                            date:formData.date,
-                            hour:formData.hour,
-                            idPatient:paciente.id
-    
-                        }).then(()=>{
-                            toast.success("El turno fue reservado")
-                            let arrayReserved=reserved;
-                            arrayReserved[formData.hour+formData.date]=true;
-                            setReserved(arrayReserved);
-                        }).catch(()=>{
+			try {
+ 			        await actions.createAppointment(
+					formData.hour,
+					formData.date,
+					paciente.id,
+					examSelected
+				);
+				toast.success("El turno fue reservado")
+				let arrayReserved=reserved;
+				arrayReserved[formData.hour+formData.date]=true;
+	                        setReserved(arrayReserved);
+			} catch (e) {
                             toast.error("Hubo un error en la reserva del turno. Vuelva a intentarlo")
-                        }).finally(()=>{
+			} finally {
                             setIsLoading(false);
                             setShowModal(false);
                             setReloading((v) => !v);
-                        })
+			}
                     }
             }
         }
-            
     }
         
     
