@@ -1,5 +1,3 @@
-import { toast } from "react-toastify";
-
 import { db } from "../shared/utils/Firebase";
 
 export const getPatientMedixExams = (patientId: string) => {
