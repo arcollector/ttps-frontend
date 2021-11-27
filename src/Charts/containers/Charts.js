@@ -5,6 +5,7 @@ import 'firebase/compat/firestore';
 import { Bar } from 'react-chartjs-2';
 import { Line } from 'react-chartjs-2';
 import '../styles/charts.scss';
+import * as actions from '../actions';
 
 const db = firebase.firestore(firebase);
 
@@ -19,43 +20,14 @@ export function Charts() {
   const [cantArray, setArray] = useState(null);
 
   useEffect(() => {
-    const refMedicExams = db.collection("medicExams");
-    refMedicExams.get().then(doc => {
-      let sumExoma = 0;
-      let sumGenoma = 0;
-      let sumCarrier = 0;
-      let sumCariotipo = 0;
-      let sumArray = 0;
-      if (!doc.empty) {
-        doc.docs.map((docActual) => {
-          switch (docActual.data().examSelected) {
-            case "exoma":
-              sumExoma++;
-              break;
-            case "genoma":
-              sumGenoma++;
-              break;
-            case "carrier":
-              sumCarrier++;
-              break;
-            case "cariotipo":
-              sumCariotipo++;
-              break;
-            case "array":
-              sumArray++;
-          }
-          return {}
-        })
-        setExoma(sumExoma);
-        setGenoma(sumGenoma);
-        setCarrier(sumCarrier);
-        setCariotipo(sumCariotipo);
-        setArray(sumArray);
-      }
-    })
-    return () => {
-
-    }
+    (async () => {
+	const sums = await actions.getPathologies();
+        setExoma(sums.sumExoma);
+        setGenoma(sums.sumGenoma);
+        setCarrier(sums.sumCarrier);
+        setCariotipo(sums.sumCariotipo);
+        setArray(sums.sumArray);
+    })();
   }, []);
 
   const data = {
@@ -103,44 +75,13 @@ export function Charts() {
   const [tiemposAño, setTiemposAño] = useState(null);
   const [tiemposDia, setTiemposDia] = useState(null);
 
-  useEffect(() => {
-    const refStates = db.collection("states");
-    refStates.get().then(doc => {
-      let añoTiempo = {};
-      if (!doc.empty) {
-        doc.docs.map((docActual) => {
-          if (docActual.data().name == "resultadoEntregado") {
-            let fechaFin = new Date();
-            fechaFin.setDate(docActual.data().day);
-            fechaFin.setMonth(docActual.data().month);
-            fechaFin.setFullYear(docActual.data().year);
-            let idActual = docActual.data().idMedicExam;
-            let fechaInicio = new Date();
-            doc.docs.map((docActual2) => {
-              if (docActual2.data().idMedicExam == idActual && docActual2.data().name == "esperandoRetiroDeMuestra") {
-                fechaInicio.setDate(docActual2.data().day);
-                fechaInicio.setMonth(docActual2.data().month);
-                fechaInicio.setFullYear(docActual2.data().year);
-              } return {}
-            })
-            let diferencia = Math.abs(fechaFin - fechaInicio);
-            let dias = diferencia / (1000 * 3600 * 24);
-            if (añoTiempo[docActual.data().year]) {
-              añoTiempo[docActual.data().year] += dias;
-            } else {
-              añoTiempo[docActual.data().year] = dias;
-            }
-          }
-          return {}
-        })
-        setTiemposDia(Object.values(añoTiempo));
-        setTiemposAño(Object.keys(añoTiempo));
-      }
-    })
-    return () => {
-
-    }
-  }, [])
+      useEffect(() => {
+	(async () => {
+		const añoTiempo = await actions.getYearTimes();
+        	setTiemposDia(Object.values(añoTiempo));
+	        setTiemposAño(Object.keys(añoTiempo));
+	})();
+      }, []);
 
   const dataTiempos = {
     labels: tiemposAño,
@@ -169,25 +110,11 @@ export function Charts() {
   const [mesEstudios, setMesEstudios] = useState(null);
 
   useEffect(() => {
-    const refMedicExams = db.collection("medicExams");
-    refMedicExams.get().then(doc => {
-      let estudiosMes = {};
-      if (!doc.empty) {
-        doc.docs.map((docActual) => {
-          if (estudiosMes[docActual.data().month]) {
-            estudiosMes[docActual.data().month]++;
-          } else {
-            estudiosMes[docActual.data().month] = 1;
-          }
-          return {}
-        })
-        setCantEstudios(Object.values(estudiosMes));
-        setMesEstudios(Object.keys(estudiosMes));
-      }
-    })
-    return () => {
-
-    }
+	  (async () => {
+		const estudiosMes = await actions.getMonthStudies();
+        	setCantEstudios(Object.values(estudiosMes));
+	        setMesEstudios(Object.keys(estudiosMes));
+	  })();
   }, []);
 
   const dataEstudiosMes = {
