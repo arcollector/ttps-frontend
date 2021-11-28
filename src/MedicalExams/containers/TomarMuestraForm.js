@@ -1,17 +1,7 @@
 import React, { useState } from 'react'
-
 import {Form, Input, Button} from 'semantic-ui-react';
-
-import firebase from '../../shared/utils/Firebase';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
 import { toast } from 'react-toastify';
-import saveState from '../../shared/helpers/saveState';
-
-
-
-
-const db= firebase.firestore(firebase);
+import * as actions from '../actions';
 
 export default function TomarMuestraForm(props) {
 
@@ -51,34 +41,26 @@ export default function TomarMuestraForm(props) {
         
     }
 
-    const onSubmit=()=>{
-        
+    const onSubmit= async () =>{
         if(formData.cantml!== 0 && formData.freezer!== 0 && !error){
             setIsLoading(true);
-            db.collection("medicalSamples").add({
+            try {
+              await actions.createMedicalSample({
                 idMedicExam:exam.id,
                 cantMl:formData.cantml,
                 freezer:formData.freezer,
-            }).then(()=>{
-
-                saveState("esperandoRetiroDeMuestra", user.displayName, exam.id).then(idState=>{
-                    console.log(exam.id);
-                    var refMedicExam = db.collection('medicExams').doc(exam.id);
-                    refMedicExam.update({
-                        idState:idState,
-                        extraccion:true
-                    }).then(() => {
-                        setReloading((v) => !v);
-                        setIsLoading(false);
-                        setShowModal(false);
-                    });
-                });
-
-            })
+              });
+              await actions.setStateEsperandoRetiroDeMuestra(exam.id, user.displayName);
+            } catch (e) {
+              console.error(e);
+            } finally {
+              setReloading((v) => !v);
+              setIsLoading(false);
+              setShowModal(false);
+            }
         }else{
             toast.success('Los datos ingresados son invalidos');
         }
-
     }
 
     return (

@@ -3,18 +3,8 @@ import {Form, Button, Image} from 'semantic-ui-react';
 import {useDropzone} from "react-dropzone";
 import NoImage from "../assets/no-image.png";
 import {toast} from 'react-toastify';
-
-
-
 import '../styles/SubirComprobanteForm.scss';
-
-import firebase from '../../shared/utils/Firebase';
-
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
-import saveState from '../../shared/helpers/saveState';
-
-const db= firebase.firestore(firebase);
+import * as actions from '../actions';
 
 export default function SubirComprobanteForm(props) {
     const {user, setShowModal, exam, setReloading} = props;
@@ -36,43 +26,29 @@ export default function SubirComprobanteForm(props) {
         onDrop
     });
 
-
-
-    const uploadImage= (fileName)=>{
-        const ref=firebase
-        .storage()
-        .ref()
-        .child(`comprobante/${fileName}`)
-
-        return ref.put(file);
-
-    }
-
-
-    const onSubmit=()=>{
+    const onSubmit = async ()=>{
         if(!file){
             toast.warning('Debe añadir la imagen del comprobante de pago');
         }else{
             setIsLoading(true);
-            const fileName=exam.id;
-            uploadImage(fileName).then(()=>{
-                toast.success('El comprobante se subio correctamente');
-                saveState("enviarConsentimiento", user.displayName, exam.id).then(idState=>{
-                    console.log(exam.id);
-                    var refMedicExam = db.collection('medicExams').doc(exam.id);
-                    refMedicExam.update({
-                        idState:idState
-                    }).then(() => {
-                        setIsLoading(false);
-                        setShowModal(false);
-                        setReloading((v) => !v);
-                    });
-                });
-            })
-        }
-
+            try {
+              const fileName=exam.id;
+              await actions.uploadComprobanteImage(file, fileName);
+          Image(file, fileName);
+              await actions.setStateEnviarConsentimiento(
+                 exam.id,
+                 user.displayName,
+              );
+              toast.success('El comprobante se subio correctamente');
+          } catch (e) {
+              console.error(e);
+          } finally {
+              setIsLoading(false);
+              setShowModal(false);
+              setReloading((v) => !v);
+          }
+      }
     }
-
 
     return (
         <Form className="comprobante-form" onSubmit={onSubmit}>

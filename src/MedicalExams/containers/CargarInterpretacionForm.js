@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Form, Input, Button, Image, List, Icon, TextArea} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
-
-import firebase from '../../shared/utils/Firebase';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
-import saveState from '../../shared/helpers/saveState';
-
-
-const db= firebase.firestore(firebase);
+import * as actions from '../actions';
 
 export default function CargarInterpretacionForm(props) {
 
@@ -23,28 +16,15 @@ export default function CargarInterpretacionForm(props) {
 
 
     useEffect(() => {
-        const refDocMedic= db.collection("medicosInformantes");
-        refDocMedic.get().then(doc=>{
-            setDoctorSelected(doc.docs[0].id);
-            let arrayDoctors=[]; 
-            if(!doc.empty){
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    
-                    data.id=docActual.id;
-                    arrayDoctors.push(data);
-                    return {}
-                })
-                setDoctors(arrayDoctors);
-               
-            }
-        })
-        return () => {
-            
-        }
+	    (async () => {
+			setDoctors(await actions.getMedicosInformantes());
+	    })();
     }, [])
-
+    useEffect(() => {
+	if (doctors.length) {
+            setDoctorSelected(doctors[0].id);
+	}
+    }, [doctors]);
 
 
 
@@ -60,34 +40,27 @@ export default function CargarInterpretacionForm(props) {
         setFormData({[e.target.name]:e.target.value});
     }
 
-    const onSubmit=()=>{
+    const onSubmit= async ()=>{
         setIsLoading(true);
         if(formData.descripcion===""){
             toast.warning("Debe ingresar la descripcion del resultado");
         }else{
+		try {
+			await actions.setResultadoEntregado(
+				exam.id,
+				user.displayName,
+				formData.descripcion,
+				doctorSelected,
+				resultSelected,
+			);
+		} catch (e) {
 
-            let  today = new Date();
-            let fechaCompleta = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-           
-            console.log(exam.id);
-            const refExam=db.collection("medicExams").doc(exam.id);
-            saveState("resultadoEntregado", user.displayName, exam.id).then(idState=>{
-                refExam.update({
-                    dateResult:fechaCompleta,
-                    idDoctorInf:doctorSelected,
-                    result:resultSelected,
-                    idState:idState,
-                    descripcion:formData.descripcion,
-                }).finally(e=>{
+		} finally {
                     setIsLoading(false);
                     setReloading((v) => !v);
                     setShowModal(false);
-                })
-            })
+		}
         }
-        
-        
-    
     }
 
     return (

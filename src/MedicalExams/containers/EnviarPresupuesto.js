@@ -1,12 +1,6 @@
 import React from 'react';
 import {toast} from 'react-toastify';
-import firebase from '../../shared/utils/Firebase';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
-import saveState from '../../shared/helpers/saveState';
-import pdfService from '../../pdfservice';
-
-const db= firebase.firestore(firebase);
+import * as actions from '../actions';
 
 export default function EnviarPresupuesto(props) {
     const {
@@ -17,42 +11,34 @@ export default function EnviarPresupuesto(props) {
         setReloading,
     } = props;
 
-    var storage = firebase.storage();
-    
-
-
-    const handlerClick = () => {
-        const targetEmail = patientInsurer ? patientInsurer.email : patient.email;
-        if (targetEmail) {
-            storage
-                .ref(`presupuestosPdf/${exam.id}.pdf`)
-                .getDownloadURL()
-                .then((url) => {
-                    const html = `<p>Acceda a esta direccion para descargar el presupuesto de su estudio medico ${url}</p>`;
-                    return pdfService.sendUsingSendgrid(
-                        targetEmail,
-                        'Presupuesto del estudio medico',
-                        html
-                    );
-                })
-                .catch((e) => {
+    const handlerClick = async () => {
+	   const request1 = async () => {
+		   try {
+        	const targetEmail = patientInsurer ? patientInsurer.email : patient.email;
+		    if (targetEmail) {
+			await actions.enviarPresupestoPdf(exam.id, targetEmail);
+		    } else {
+            		toast.error('Obra social del paciente no tiene configurado el correo electronico');
+		    }
+	    } catch (e) {
                     console.error(e);
                     toast.error(`Fallo el envio del pdf ${exam.id} al email del paciente ${patient.email}`);
-                });
-        } else {
-            toast.error('Obra social del paciente no tiene configurado el correo electronico');
-        }
+	    }
+	   };
+	
+	const request2 = async () => {
+		try {
+			await actions.enviarPrespuesto(exam.id, user.displayName);
+                	toast.success("El presupuesto fue enviado");
+		    } catch(e) {
 
-        saveState("esperandoComprobante", user.displayName, exam.id).then(idState=>{
-            console.log(exam.id);
-            var refMedicExam = db.collection('medicExams').doc(exam.id);
-            refMedicExam.update({
-                idState:idState
-            }).then(() => {
-                setReloading((v) => !v);
-                toast.success("El presupuesto fue enviado");
-            });
-        });
+		    } finally {
+			setReloading((v) => !v);
+		    }
+	};
+
+	request1();
+	await request2();
     };
 
 

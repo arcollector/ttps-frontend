@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react';
-
 import { useParams} from 'react-router-dom';
-import firebase from '../../shared/utils/Firebase';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
-
 import '../styles/lote.scss';
-
-const db= firebase.firestore(firebase);
+import * as actions from '../actions';
 
 
 export default function Lote() {
@@ -17,20 +11,9 @@ export default function Lote() {
     
    
     useEffect(() => {
-        let examenes=[];
-        let lote;
-        var refLote = db.collection('lotes').doc(loteId);
-        refLote.get().then(doc=>{
-            lote=(doc.data());
-            lote.id=doc.id;
-            setLote(lote);
-            
-            
-
-        })
-        return () => {
-        
-        }
+	    (async () => {
+	       setLote(await actions.getLote(loteId));
+	    })();
     }, [])
     
     

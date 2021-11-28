@@ -1,12 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon, Button } from 'semantic-ui-react';
-import firebase from '../../shared/utils/Firebase';
-
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
-
-
 import '../styles/MedicalExams.scss';
 import EnviarPresupuesto from './EnviarPresupuesto';
 import SubirComprobante from './SubirComprobante';
@@ -18,134 +12,51 @@ import RetirarMuestra from './RetirarMuestra';
 import { actions as insurersActions } from '../../Insurers';
 import CargarInterpretacion from './CargarInterpretacion';
 import EnviarResultado from './EnviarResultado';
-
-
-const db= firebase.firestore(firebase);
-
+import * as actions from '../actions';
 
 export function MedicalExams(props) {
-
-    
     const {user}= props;
     
-    const [exams, setExams] = useState(null);
     const [doctors, setDoctors] = useState(null);
     const [patients, setPatients] = useState(null);
-    const [states, setStates] = useState([]);
     const [filterStates, setFilterStates] = useState(null);
     const [reloading, setReloading] = useState(false);
     const [viewFilter, setViewFilter] = useState({estado:"todos"})
     const [ insurers, setInsurers ] = React.useState([]);
 
     useEffect(() => {
-        const refDocStates= db.collection("states");
-        let filters=[];
-        let arrayStates=[]; 
-        refDocStates.get().then(doc=>{
-            
-            
-            if(!doc.empty){
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    
-                    data.id=docActual.id;
-                    arrayStates[data.id]=data.name;
-                    if(!filters.includes(data.name)){
-                        filters.push(data.name);
-                        filters[data.name]=[];
-                       
-                    }
-                    return {}
-                    
-                })
-                
-                setStates(arrayStates);
-                
-               
+        (async () => {
+          const statesAsDict = await actions.getStatesAsDict();
+          const filters = Object.values(statesAsDict).reduce((acc, state) => ({
+              ...acc,
+              [state.name]: [], 
+           }), {});
+          const exams = await actions.getExams();
+          exams.forEach((exam) => {
+            if (exam.idState in statesAsDict) {
+              filters[statesAsDict[exam.idState].name].push(exam);
             }
-        })
-
-        const refMedicExams= db.collection("medicExams");
-        refMedicExams.get().then(doc=>{
-            let arrayExams=[]; 
-            
-            if(!doc.empty ){
-
-                
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    data.id=docActual.id;
-                    arrayExams.push(data);
-                    
-                    filters[arrayStates[data.idState]]?.push(data);
-                    
-                    
-                    return{}
-                }) 
-
-                
-               
-                setExams(arrayExams);
-                setFilterStates(filters);
-                
-                   
-               
-            }
-        })
-
-        return () => {
-            
-        }
-    }, [reloading])
-    
-
-
-   
-
+          });
+          setFilterStates({ ...filters });
+        })();
+    }, [reloading]);
 
     useEffect(() => {
-        const refDocMedic= db.collection("doctors");
-        refDocMedic.get().then(doc=>{
-            
-            let arrayDoctors=[]; 
-            if(!doc.empty){
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    
-                    data.id=docActual.id;
-                    arrayDoctors[data.id]=`${data.nombre} ${data.apellido}`;
-                    return {}
-                    
-                })
-                setDoctors(arrayDoctors);
-               
-            }
-        })
-        return () => {
-            
-        }
+        (async () => {
+          const list = await actions.getDoctors();
+          setDoctors(
+            list.reduce((acc, item) => ({
+              ...acc,
+              [item.id]: `${item.nombre} ${item.apellido}`,
+            }), {})
+          );
+        })();
     }, [])
 
-
-
     useEffect(() => {
-        const refDocMedic= db.collection("patients");
-        refDocMedic.get().then((doc) => {
-            if(!doc.empty){
-                setPatients(
-                    doc.docs.reduce((acc, docActual)=> ({
-                        ...acc,
-                        [docActual.id]: {
-                            ...docActual.data(),
-                            id: docActual.id,
-                        },
-                    }), {})
-                );
-            }
-        });
+        (async () => {
+          setPatients(await actions.getPatientsAsDict());
+        })();
     }, []);
 
     useEffect(() => {
@@ -184,7 +95,7 @@ export function MedicalExams(props) {
         </select>
 
         {filterStates &&
-        filterStates?.map((exams, i) =>
+        Object.keys(filterStates).map((exams, i) =>
             <Fragment key={i}>
                 {exams==="enviarPresupuesto" &&
                 filterStates[exams].length>0 &&

@@ -1,29 +1,15 @@
-
 import React, { useState, useEffect } from 'react';
 import {Form, Input, Button, Image, List, Icon, TextArea} from 'semantic-ui-react';
 import {toast} from 'react-toastify';
-import firebase from '../../shared/utils/Firebase';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
-
-
-import pdfService from '../../pdfservice';
-import { BACKEND_URL } from '../../httpservices'
-
+import { Patients, helpers as patientsHelpers } from '../../Patients'
+import { actions as insurersActions } from '../../Insurers';
+import * as actions from '../actions';
+import '../styles/MedicalExamNewForm.scss';
 import examen from '../assets/virus1.jpg'
 import examen2 from '../assets/virus2.jpg'
 import examen3 from '../assets/virus3.jpg'
 import examen4 from '../assets/virus4.jpg'
 import examen5 from '../assets/virus5.jpg'
-
-
-import saveState from '../../shared/helpers/saveState';
-import { Patients, helpers as patientsHelpers } from '../../Patients'
-import { actions as insurersActions } from '../../Insurers';
-
-import '../styles/MedicalExamNewForm.scss';
-
-const db= firebase.firestore(firebase);
 
 export function MedicalExamNewForm(props) {
     const {setShowModal, user}= props;
@@ -40,61 +26,31 @@ export function MedicalExamNewForm(props) {
     const [ patientInsurer, setPatientInsurer ] = React.useState(null);
     const [selected, setSelected] = useState("");
 
-    React.useEffect(() => {
+    useEffect(() => {
         (async () => {
           setInsurers(await insurersActions.getAllInsurers());
         })();
     }, []);
 
     useEffect(() => {
-        const refDocPrices= db.collection("pricesMedicExams");
-        refDocPrices.get().then(doc=>{
-            let arrayPrices=[]; 
-            if(!doc.empty){
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    data.id=docActual.id;
-                    arrayPrices[data.exam]=data.price;
-                    return {}
-                })
-               
-                setPrices(arrayPrices);
-                
-               
-            }
-        })
-        return () => {
-            
-        }
-    }, [])
-
+        (async () => {
+          setPrices(await actions.getPrices());
+        })();
+    }, []);
 
     useEffect(() => {
-        const refDocMedic= db.collection("doctors");
-        refDocMedic.get().then(doc=>{
-            setDoctorSelected(doc.docs[0].id);
-            let arrayDoctors=[]; 
-            if(!doc.empty){
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    
-                    data.id=docActual.id;
-                    arrayDoctors.push(data);
-                    return {}
-                })
-                setDoctors(arrayDoctors);
-               
-            }
-        })
-        return () => {
-            
-        }
-    }, [])
-    
+      (async () => {
+        setDoctors(await actions.getDoctors());
+      })();
+    }, []);
 
-    const onSubmit=async()=>{
+    useEffect(() => {
+      if (doctors.length) {
+            setDoctorSelected(doctors[0].id);
+      }
+    }, [doctors]);
+    
+  const onSubmit=async()=>{
         
         if(!paciente){
             toast.warning("El examen debe incluir los datos del paciente");
@@ -106,124 +62,56 @@ export function MedicalExamNewForm(props) {
                     toast.warning("Se debe seleccionar un examen medico");
                 }else{
                     setIsLoading(true);
-                    
-                        
-                        
-                        let  today = new Date(),
-                        date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-                        let day=today.getDate();
-                        let month=today.getUTCMonth()+1;
-                        let year=today.getFullYear();
-                            
-                            db.collection("medicExams").add({
-                                
-                                idPatient:paciente.id,
-                                idEmployee:user.uid,
-                                idMedic:doctorSelected,
-                                patology:formData.patologia,
-                                exomaSelected:seleccionado["exoma"],
-                                genomaSelected:seleccionado["genoma"],
-                                carrierSelected:seleccionado["carrier"],
-                                cariotipoSelected:seleccionado["cariotipo"],
-                                arraySelected:seleccionado["array"],
-                                price:prices[selected],
-                                examSelected:selected,
-                                fechaCompleta:date,
-                                day:day,
-                                month:month,
-                                year:year,
-                                idState:"",
-                                pago:false,
-                                extraccion:false,
+                    try {
+                       const medicExam = await actions.createMedicExam({
+                          idPatient: paciente.id,
+                          idEmployee: user.uid,
+                          idMedic: doctorSelected,
+                          patology: formData.patologia,
+                          exomaSelected:seleccionado["exoma"],
+                          genomaSelected:seleccionado["genoma"],
+                          carrierSelected:seleccionado["carrier"],
+                          cariotipoSelected:seleccionado["cariotipo"],
+                          arraySelected:seleccionado["array"],
+                          price:prices[selected],
+                          examSelected:selected,
+                        });
+                        let idMedicExam=medicExam.id;
+                        await actions.setStateEnviarPresupuesto(user.displayName, idMedicExam); 
+                        toast.success("El estudio fue cargado correctamente");
 
-    
-    
-                            }).then((e)=>{
-                                let idMedicExam=e.id;
-                                console.log('por que no anda esto');
-                                MyDocument(idMedicExam);
-                                saveState("enviarPresupuesto", user.displayName, idMedicExam).then(idState=>{
-                                    
-                                    var refMedicExam = db.collection('medicExams').doc(idMedicExam);
-                                    refMedicExam.update({
-                                        idState:idState
-                                    })
-                                });
-                                toast.success("El estudio fue cargado correctamente");
-                            }).catch((error)=>{
-                                toast.error("Error al guardar el estudio");
-                                console.log(error);
-                            }).finally(()=>{
-                                
-                                setIsLoading(false);
-                                setFormData(initialValues());
-                                setShowModal(false);
-                            })
-    
+                        downloadPresupuestoPdf(paciente, idMedicExam);
 
-
-
-                      
-                        
-
-
-                        
-                    
+                    } catch (error) {
+                        console.error(error);
+                        toast.error("Error al guardar el estudio");
+                    } finally {
+                        setIsLoading(false);
+                        setFormData(initialValues());
+                        setShowModal(false);
+                    }
                 }
             }
         } 
     }
 
-    // const uploadPdf=async(fileName)=>{
-    //     const metadata = {
-    //         contentType: 'application/pdf',
-    //       };
-    //     const ref= firebase.storage().ref().child(`estudiospdf/${fileName}`);
-    //     return await ref.put(file, metadata);
-    // }
-
-    const MyDocument=async(idMedicExam)=>{
+    const downloadPresupuestoPdf = async(paciente, idMedicExam)=>{
         try{
-            pdfService.downloadPDF(
-                `${BACKEND_URL}/pdf/informe?usuario=${paciente.nombre}`,
-                paciente
-            ).then((res)=>{
-
-                //var file = new File([myBlob], "name");
-                console.log(res);
-                const file= new Blob([res.data], {type:'application/pdf'});
-                //var file2 = new File([file], "holaname");
-
-                const metadata = {
-                    contentType: 'application/pdf',
-                  };
-                console.log(1, idMedicExam);
-                const ref = firebase
-                    .storage()
-                    .ref()
-                    .child(`presupuestosPdf/${idMedicExam}.pdf`);
-                  
-                console.log(2, ref);
-                ref.put(file, metadata);
-                
-                console.log(file);
-                const anchorLink= document.createElement('a');
-                anchorLink.href=window.URL.createObjectURL(file);
-                anchorLink.setAttribute('download','prueba5.pdf');
-                anchorLink.click();
-                let fd= new FormData();
-                fd.set('a', file);
-
-
-                
-
-
-                return fd.get('a');
-                //return file;
-            })
+            const res = await actions.downloadInformePdf(paciente);
+            const file= new Blob([res.data], {type:'application/pdf'});
+            const metadata = {
+                contentType: 'application/pdf',
+              };
+            await actions.setPresupuestoPdf(idMedicExam, file, metadata);
+            const anchorLink= document.createElement('a');
+            anchorLink.href=window.URL.createObjectURL(file);
+            anchorLink.setAttribute('download','prueba5.pdf');
+            anchorLink.click();
+            let fd= new FormData();
+            fd.set('a', file);
+            return fd.get('a');
         }catch(error){
-
-            console.log(error);
+            console.error(error);
         }
     }
 

@@ -1,33 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import {Calendar, momentLocalizer} from 'react-big-calendar';
 import moment from 'moment';
+import 'moment/locale/es';
 import { Button } from 'semantic-ui-react';
 
 import {messagesSPA} from '../../shared/helpers/calendar-lang-es';
 import { Modal } from '../../shared/components/Modal';
 import { AppointmentNewForm } from './AppointmentNewForm';
+import * as actions from '../actions';
 
-
-//BASE DE DATOS
-import firebase from '../../shared/utils/Firebase';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
-
-
-
-
-
-import 'moment/locale/es';
-
-import '../styles/AppointmentsSchedule.scss';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import "react-widgets/scss/styles.scss";
-
-
-
-moment.locale('es');
-
-const db= firebase.firestore(firebase);
+import '../styles/AppointmentsSchedule.scss';
 
 // const events=[{
 //     title:'Paciente: yabran',
@@ -39,8 +23,8 @@ const db= firebase.firestore(firebase);
 //     }
 // }];
 
+moment.locale('es');
 const localizer= momentLocalizer(moment);
-
 
 export function AppointmentsSchedule() {
 
@@ -48,9 +32,9 @@ export function AppointmentsSchedule() {
     const [titleModal, setTitleModal] = useState(null);
     const [contentModal, setContentModal] = useState(null);
     const [eventos, setEventos] = useState([]);
-    const [patients, setPatients] = useState(null);
+    const [patients, setPatients] = useState({});
     const [events, setEvents] = useState([]);
-    const [reserved, setReserved] = useState([]);
+    const [reserved, setReserved] = useState({});
     const [reloading, setReloading] = useState(false);
 
 
@@ -59,57 +43,25 @@ export function AppointmentsSchedule() {
     //const startDate= moment().minutes(0).seconds(0).add(1,'hours');
     
     useEffect(() => {
-        const refDocMedic= db.collection("patients");
-        refDocMedic.get().then(doc=>{
-            
-            let arrayPatients=[]; 
-            if(!doc.empty){
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    
-                    data.id=docActual.id;
-                    data.nombreCompleto=`${data.nombre} ${data.apellido}`;
-                    arrayPatients[data.id]=data;
-                    return {}
-                    
-                })
-                setPatients(arrayPatients);
-               
-            }
-        })
-        return () => {
-            
-        }
-    }, [])
+	(async () => {
+		setPatients(await actions.getAllPatients());
+	})();
+    }, []);
     
     useEffect(() => {
-        const refMedicExams= db.collection("shifts");
-        refMedicExams.get().then(doc=>{
-            let arrayEvents=[]; 
-            let shiftReserved=[];
-            if(!doc.empty){
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    data.id=docActual.id;
-                    arrayEvents.push(data);
-                    
-                    shiftReserved[data.hour+data.date]=true;
-                    return {}
-                })
-               
-                setEventos(arrayEvents);
-                
-                setReserved(shiftReserved);
-                
-               
-            }
-        })
-        return () => {
-            
-        }
-    }, [reloading])
+	(async () => {
+		setEventos(await actions.getAllShifts());
+	})();
+    }, [reloading]);
+
+    useEffect(() => {
+	setReserved(
+		eventos.reduce((acc, data) => ({
+			...acc,
+			[`${data.hour}${data.date}`]: true,
+		}), {})
+	);
+    }, [eventos]);
 
     useEffect(() => {
         let arrayEvents=[];
@@ -117,26 +69,23 @@ export function AppointmentsSchedule() {
         let hora;
         let minutos;
         
-        eventos.map(eventoActual=>{
-            let evento={};
-            hora=parseInt(eventoActual.hour.substr(0,2));
-            minutos=parseInt(eventoActual.hour.substr(3,5))
-            
-            
-            evento.title=patients[eventoActual.idPatient].nombreCompleto;
-            evento.start=moment(eventoActual.date, "L").hour(hora).minutes(minutos).toDate();
-            evento.end=moment(eventoActual.date, "L").hour(hora).minutes(minutos+15).toDate();
-            evento.bgcolor='#fafafa';
-            evento.user={ name:'Fer' }
-            
-            arrayEvents.push(evento);
-
-            return{}
+        eventos.forEach(eventoActual=>{
+	    if (eventoActual.idPatient in patients) {
+		    let evento={};
+		    hora=parseInt(eventoActual.hour.substr(0,2));
+		    minutos=parseInt(eventoActual.hour.substr(3,5))
+		    
+		    
+		    evento.title=patients[eventoActual.idPatient].nombreCompleto;
+		    evento.start=moment(eventoActual.date, "L").hour(hora).minutes(minutos).toDate();
+		    evento.end=moment(eventoActual.date, "L").hour(hora).minutes(minutos+15).toDate();
+		    evento.bgcolor='#fafafa';
+		    evento.user={ name:'Fer' }
+		    
+		    arrayEvents.push(evento);
+	    }
         })
         setEvents(arrayEvents);
-        return () => {
-            
-        }
     }, [eventos,patients])
 
     

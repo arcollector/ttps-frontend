@@ -1,18 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams} from 'react-router-dom';
-
-import firebase from '../../shared/utils/Firebase';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
-
-
 import '../styles/Exam.scss';
-
-const db= firebase.firestore(firebase);
-const storage = firebase.storage();
-
-
-
+import * as actions from '../actions';
 
 export default function Exam() {
 
@@ -21,111 +10,100 @@ export default function Exam() {
     const [exam, setExam] = useState(null);
     const [patient, setPatient] = useState(null);
     const [state, setState] = useState(null);
-    const [historial, setHistorial] = useState([]);
+    const [historial, setHistorial] = useState({});
     const [sample, setSample] = useState([]);
     const [shift, setShift] = useState([])
     const [urlConsentimiento, setUrlConsentimiento] = useState(null);
     const [urlComprobante, setUrlComprobante] = useState(null);
     const [lote, setLote] = useState(null);
-    
+
     useEffect(() => {
+      (async () => {
+         setExam(await actions.getExam(examId));
+      })();
+    }, []);
 
-        let examen;
-        let medico;
-        let paciente;
-        let estado;
-        let estados=[];
-        let muestra;
-        let turno;
-        let loteAux;
-        
-        var refMedicExam = db.collection('medicExams').doc(examId);
-        refMedicExam.get().then(doc=>{
-            examen=(doc.data());
-            examen.id=doc.id;
-            setExam(examen);
-            var refMedic= db.collection('doctors').doc(examen.idMedic);
-            refMedic.get().then(doc=>{
-                medico=(doc.data());
-                setDoctor(medico);
-            });
-            var refPatient= db.collection('patients').doc(examen.idPatient);
-            refPatient.get().then(doc=>{
-                paciente=(doc.data());
-                setPatient(paciente);
-            });
-            var refState= db.collection('states').doc(examen.idState);
-            refState.get().then(doc=>{
-                estado=(doc.data());
-                setState(estado);
-            });
-            const refDocs= db.collection('states').where("idMedicExam","==",examen.id);
-            refDocs.get().then(result=>{
-                
-                result.docs.map(doc=>{
-                    estados[doc.data().name]=(doc.data());
-                    estados[doc.data().name].id=doc.id
-                    
-                    return{}
-                })
-                
-                setHistorial(estados);
-                if(estados["esperandoLote"]!==undefined){
-                    var refSamples= db.collection('medicalSamples').where("idMedicExam", "==",  examen.id);
-                    refSamples.get().then(doc=>{
-                     muestra=(doc.docs[0].data());
-                     setSample(muestra);
-                    
-                    });
-                }
-                if(estados["esperandoTomaDeMuestra"]!==undefined){
-                    var refShifts= db.collection('shifts').where("idMedicExam", "==",  examen.id);
-                    refShifts.get().then(doc=>{
-                     turno=(doc.docs[0].data());
-                     setShift(turno);
-                    
-                    });
-                }
-
-                if(estados["enviarConsentimiento"]!==undefined){
-                    storage.ref(`comprobante/${examen.id}`).getDownloadURL().then(url=>{
-                        setUrlComprobante(url);
-                    });
-                }
-
-                if(estados["esperandoTurno"]!==undefined){
-                    storage.ref(`consentimiento/${examen.id}`).getDownloadURL().then(url=>{
-                        setUrlConsentimiento(url);
-                    });
-                }
-                if(estados["esperandoRetiroDeMuestra"]!==undefined){
-                    var refLote= db.collection('lotes').doc(examen.idLote);
-                    refLote.get().then(doc=>{
-                     loteAux=doc.data();
-                     loteAux.id=doc.id;
-                     setLote(loteAux);
-                    
-                    });
-                }
-            });
-            var refState2= db.collection('states').doc(examen.idState);
-            refState2.get().then(doc=>{
-                estado=(doc.data());
-                setState(estado);
-            });
-            
-        });
-        
-        
-
-        return () => {
-            
+    useEffect(() => {
+      (async () => {
+        if (exam) {
+          setDoctor(await actions.getDoctor(exam.idMedic));
         }
-    }, [])
+      })();
+    }, [exam]);
 
+    useEffect(() => {
+      (async () => {
+        if (exam) {
+         setPatient(await actions.getPatient(exam.idPatient));
+        }
+      })();
+    }, [exam]);
 
+    useEffect(() => {
+      (async () => {
+        if (exam) {
+          setState(await actions.getState(exam.idState));
+        }
+      })();
+    }, [exam]);
+   
+    useEffect(() => {
+      (async () => {
+        if (exam) {
+          setHistorial(await actions.getHistorial(exam.id)); 
+        }
+      })();
+    }, [exam]);
 
+    useEffect(() => {
+      (async () => {
+        if (exam) {
+          if(historial["esperandoLote"]!==undefined){
+            setSample(await actions.getMedicalSample(exam.id));
+          }
+        }
+      })();
+    }, [exam, historial]);
 
+    useEffect(() => {
+      (async () => {
+        if (exam) {
+          if(historial["esperandoTomaDeMuestra"]!==undefined){
+            setShift(await actions.getShift(exam.id));
+          }
+        }
+      })();
+    }, [exam, historial]);
+
+    useEffect(() => {
+      (async () => {
+        if (exam) {
+            if(historial["enviarConsentimiento"]!==undefined){
+              setUrlComprobante(await actions.getUrlComprobante(exam.id));
+            }
+        }
+      })();
+    }, [exam, historial]);
+
+    useEffect(() => {
+      (async () => {
+        if (exam) {
+          if(historial["esperandoTurno"]!==undefined){
+            setUrlConsentimiento(await actions.getUrlConsentimiento(exam.id));
+          }
+        }
+      })();
+    }, [exam, historial]);
+
+    useEffect(() => {
+      (async () => {
+        if (exam) {
+          if(historial["esperandoRetiroDeMuestra"]!==undefined){
+            setLote(await actions.getLote(exam.idLote));
+          }
+        }
+      })();
+    }, [exam, historial]);
 
     return (
         <div className="content-exam">
