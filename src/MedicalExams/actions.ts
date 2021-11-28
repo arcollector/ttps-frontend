@@ -242,7 +242,11 @@ export const getMedicalSample = (examId: string) => {
     .where("idMedicExam", "==", examId)
     .get()
     .then((doc) => {
-      return Promise.resolve(doc.docs[0].data());
+      const data = doc.docs[0];
+      return Promise.resolve({
+        ...data.data(),
+        id: data.id,
+      });
     });
 };
 

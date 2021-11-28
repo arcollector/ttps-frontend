@@ -21,7 +21,7 @@ export default function RetirarMuestraForm(props) {
             try {
               const medicalSample = await actions.getMedicalSample(exam.id);
               await actions.updateMedicalSample(medicalSample.id, { retiradoPor: formData.name });
-              await actions.setStateEsperandoLote(user.displayName, exam.id);
+              await actions.setStateEsperandoLote(exam.id, user.displayName);
               await actions.setStateEnLote(user.displayName) 
             } catch (e) {
               console.error(e);
