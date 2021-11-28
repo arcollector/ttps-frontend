@@ -7,6 +7,7 @@ import { Icon, Button } from 'semantic-ui-react';
 
 
 import '../styles/payment.scss';
+import * as actions from '../actions';
 
 const db= firebase.firestore(firebase);
 

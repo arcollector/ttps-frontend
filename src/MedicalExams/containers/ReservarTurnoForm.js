@@ -1,4 +1,3 @@
-//LIBRERIAS
 import React, { useState, useEffect } from 'react';
 import {Form, Button, } from 'semantic-ui-react';
 import {toast} from 'react-toastify';
@@ -6,20 +5,11 @@ import DatePicker from "react-widgets/DatePicker";
 import DropdownList from "react-widgets/DropdownList";
 import twix from 'twix';
 import moment from 'moment';
-import saveState from '../../shared/helpers/saveState';
-
-//BASE DE DATOS
-import { db } from '../../shared/utils/Firebase';
-
-//SCSS
 import '../../Appointments/styles/AppointmentNewForm.scss'
 import "react-widgets/scss/styles.scss";
-
-
-//INICIALIZACIONES
+import * as actions from '../actions';
 
 moment.locale('es');
-
 const now= moment().minutes(0).seconds(0).add(1,'hours');
 // const nowPlus1=now.clone().add(1,'hours');
 // const nowPlus7=now.clone().add(7,'hours');
@@ -33,59 +23,24 @@ export default function ReservarTurnoForm(props) {
     const [reserved, setReserved] = useState([]);
     const [reloadingShifts, setReloadingShifts] = useState(true);
 
-
-
-
-
     useEffect(() => {
-        const refMedicExams= db.collection("shifts");
-        refMedicExams.get().then(doc=>{
-             
-            let shiftReserved=[];
-            if(!doc.empty){
-                
-                doc.docs.map((docActual)=>{
-                    const data=docActual.data();
-                    
-                    
-                    shiftReserved[data.hour+data.date]=true;
-                    return {}
-                })
-               
-                
-                
-                setReserved(shiftReserved);
-                
-               
-            }
-        })
-        return () => {
-            
-        }
+        (async () => {
+          setReserved(await actions.getShiftsReserved());
+        })();
     }, [reloadingShifts])
     
-
-
     const getTimeList=()=>{
         const horario= now.hours(8).minutes(0).twix(now.clone().add(7,'hours'));
         horario.format({hourFormat: "hh"})
         let iter=horario.iterate(15, 'minutes');
         let turnos=[];
-        
         while(iter.hasNext()){
-            
             turnos.push(iter.next().format('HH:mm'));
         }
-        
-        
-        
-        
         return turnos; 
-    
     }
 
     const handleDateChange=(e)=>{
-        
         setDateStart(e);
         setFormData({
             ...formData,
@@ -101,51 +56,35 @@ export default function ReservarTurnoForm(props) {
     }
 
 
-    const onSubmit=()=>{
-        
-        
+    const onSubmit = async () => {
         if(reserved[formData.hour+formData.date]){
-            
             toast.warning('El turno elegido no esta disponible')
         }else{
-                        
             setIsLoading(true);
-                        
-            db.collection("shifts").add({
-                idMedicExam:exam.id,
-                date:formData.date,
-                hour:formData.hour,
-                idPatient:exam.idPatient,
+            try {
+              await actions.createShift({
+                  idMedicExam:exam.id,
+                  date:formData.date,
+                  hour:formData.hour,
+                  idPatient:exam.idPatient,
+              });
+              await actions.setStateEsperandoTomaDeMuestra(exam.id, user.displayName);
 
-            }).then(()=>{
+              toast.success("El turno fue reservado")
+              setReserved({
+                ...reserved,
+                [formData.hour+formData.date]: true,
+              });
+              setReloading((v) => !v);
 
-                return saveState("esperandoTomaDeMuestra", user.displayName, exam.id)
-            
-            }).then(idState=>{
-                console.log(exam.id);
-                var refMedicExam = db.collection('medicExams').doc(exam.id);
-                return refMedicExam.update({
-                    idState:idState
-                });
-                    
-            }).then(() => {
-                toast.success("El turno fue reservado")
-                let arrayReserved=reserved;
-                arrayReserved[formData.hour+formData.date]=true;
-                setReserved(arrayReserved);
-                setReloading((v) => !v);
-
-            }).catch(()=>{
-                toast.error("Hubo un error en la reserva del turno. Vuelva a intentarlo")
-            }).finally(() => {
-                setIsLoading(false);
-                setShowModal(false);
-                setReloadingShifts((v) => !v);
-            });
+            } catch (e) {
+              toast.error("Hubo un error en la reserva del turno. Vuelva a intentarlo")
+            } finally {
+              setIsLoading(false);
+              setShowModal(false);
+              setReloadingShifts((v) => !v);
+            }
         }
-            
-        
-            
     }
 
 

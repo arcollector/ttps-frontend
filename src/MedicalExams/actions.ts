@@ -246,6 +246,29 @@ export const getMedicalSample = (examId: string) => {
     });
 };
 
+export const updateMedicalSample = (id: string, data: Record<string, any>) => {
+  return db.collection("medicalSamples").doc(id).update(data);
+};
+
+export const getShiftsReserved = () => {
+  return db
+    .collection("shifts")
+    .get()
+    .then((doc) => {
+      if (!doc.empty) {
+        return Promise.resolve(
+          doc.docs.reduce((acc, docActual) => {
+            const data = docActual.data();
+            return {
+              [`${data.hour}${data.date}`]: true,
+            };
+          }, {})
+        );
+      }
+      return Promise.resolve({});
+    });
+};
+
 export const getShift = (examId: string) => {
   return db
     .collection("shifts")
@@ -362,4 +385,157 @@ export const setPresupuestoPdf = (
     .ref()
     .child(`presupuestosPdf/${idMedicExam}.pdf`)
     .put(file, metadata);
+};
+
+export const createShift = (shift: {
+  idMedicExam: string;
+  date: string;
+  hour: string;
+  idPatient: string;
+}) => {
+  return db.collection("shifts").add(shift);
+};
+
+export const setStateEsperandoTomaDeMuestra = (
+  examId: string,
+  displayName: string
+) => {
+  return saveState("esperandoTomaDeMuestra", displayName, examId).then(
+    (idState) => {
+      return db.collection("medicExams").doc(examId).update({
+        idState,
+      });
+    }
+  );
+};
+
+export const setStateEsperandoLote = (examId: string, displayName: string) => {
+  return saveState("esperandoLote", displayName, examId).then((idState) => {
+    return db.collection("medicExams").doc(examId).update({
+      idState,
+    });
+  });
+};
+
+export const setStateEnLote = (displayName: string) => {
+  const req1 = (arrayStates: Record<string, string>[]): Promise<void>[] => {
+    const promises = [];
+    for (let id = 0; id <= 9; id++) {
+      promises.push(
+        saveState("enLote", displayName, arrayStates[id].idMedicExam).then(
+          (idState) => {
+            return db
+              .collection("medicExams")
+              .doc(arrayStates[id].idMedicExam)
+              .update({
+                idState,
+              });
+          }
+        )
+      );
+    }
+    return promises;
+  };
+
+  const req2 = (arrayStates: Record<string, string>[]): Promise<any> => {
+    return db
+      .collection("lotes")
+      .get()
+      .then((result) => {
+        let idLote = result.docs.length;
+        return db.collection("lotes").add({
+          numLote: idLote + 1,
+          idMedicExam1: arrayStates[0].idMedicExam,
+          idMedicExam2: arrayStates[1].idMedicExam,
+          idMedicExam3: arrayStates[2].idMedicExam,
+          idMedicExam4: arrayStates[3].idMedicExam,
+          idMedicExam5: arrayStates[4].idMedicExam,
+          idMedicExam6: arrayStates[5].idMedicExam,
+          idMedicExam7: arrayStates[6].idMedicExam,
+          idMedicExam8: arrayStates[7].idMedicExam,
+          idMedicExam9: arrayStates[8].idMedicExam,
+          idMedicExam10: arrayStates[9].idMedicExam,
+          state: "esperandoResultado",
+          urlResultado: "",
+        });
+      })
+      .then((e) => {
+        return Promise.all(
+          arrayStates.map((state) => {
+            return db.collection("medicExams").doc(state.idMedicExam).update({
+              idLote: e.id,
+            });
+          })
+        );
+      });
+  };
+
+  return db
+    .collection("states")
+    .where("name", "==", "esperandoLote")
+    .get()
+    .then((result): Promise<any> => {
+      if (result.docs.length < 10) {
+        return Promise.all([]);
+      }
+      const arrayStates = result.docs.map((docActual, i) => {
+        const data = docActual.data();
+        return {
+          ...data,
+          id: docActual.id,
+        };
+      });
+      return Promise.all([...req1(arrayStates), req2(arrayStates)]);
+    });
+};
+
+export const uploadComprobanteImage = (file: Blob, fileName: string) => {
+  return storage.ref().child(`comprobante/${fileName}`).put(file);
+};
+
+export const setStateEnviarConsentimiento = (
+  examId: string,
+  displayName: string
+) => {
+  return saveState("enviarConsentimiento", displayName, examId).then(
+    (idState) => {
+      return db.collection("medicExams").doc(examId).update({
+        idState,
+      });
+    }
+  );
+};
+
+export const uploadConcentimientoImage = (file: Blob, fileName: string) => {
+  return storage.ref().child(`consentimiento/${fileName}`).put(file);
+};
+
+export const setStateEsperandoTurno = (examId: string, displayName: string) => {
+  return saveState("esperandoTurno", displayName, examId).then((idState) => {
+    return db.collection("medicExams").doc(examId).update({
+      idState,
+    });
+  });
+};
+
+export const createMedicalSample = (data: {
+  idMedicExam: string;
+  cantMl: string;
+  freezer: string;
+}) => {
+  return db.collection("medicalSamples").add(data);
+};
+
+export const setStateEsperandoRetiroDeMuestra = (
+  examId: string,
+  displayName: string
+) => {
+  return saveState("esperandoRetiroDeMuestra", displayName, examId).then(
+    (idState) => {
+      return db.collection("medicExams").doc(examId).update({
+        idState,
+        extraccion: true,
+      });
+    }
+  );
 };
