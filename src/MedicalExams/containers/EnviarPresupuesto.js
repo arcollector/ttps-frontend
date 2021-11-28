@@ -11,7 +11,7 @@ export default function EnviarPresupuesto(props) {
         setReloading,
     } = props;
 
-    const handlerClick = () => {
+    const handlerClick = async () => {
 	   const request1 = async () => {
 		   try {
         	const targetEmail = patientInsurer ? patientInsurer.email : patient.email;
@@ -38,7 +38,7 @@ export default function EnviarPresupuesto(props) {
 	};
 
 	request1();
-	request2();
+	await request2();
     };
 
 
