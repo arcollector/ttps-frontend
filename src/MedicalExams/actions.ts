@@ -88,6 +88,26 @@ export const enviarResultado = (examId: string, displayName: string) => {
   });
 };
 
+export const getExams = () => {
+  return db
+    .collection("medicExams")
+    .get()
+    .then((doc) => {
+      if (!doc.empty) {
+        return Promise.resolve(
+          doc.docs.map((docActual) => {
+            const data = docActual.data();
+            return {
+              ...data,
+              id: docActual.id,
+            };
+          })
+        );
+      }
+      return Promise.resolve([]);
+    });
+};
+
 export const getExam = (examId: string) => {
   return db
     .collection("medicExams")
@@ -132,6 +152,29 @@ export const getDoctor = (doctorId: string) => {
     });
 };
 
+export const getPatientsAsDict = () => {
+  return db
+    .collection("patients")
+    .get()
+    .then((doc) => {
+      if (!doc.empty) {
+        return Promise.resolve(
+          doc.docs.reduce(
+            (acc, docActual) => ({
+              ...acc,
+              [docActual.id]: {
+                ...docActual.data(),
+                id: docActual.id,
+              },
+            }),
+            {}
+          )
+        );
+      }
+      return Promise.resolve(null);
+    });
+};
+
 export const getPatient = (patientId: string) => {
   return db
     .collection("patients")
@@ -149,6 +192,26 @@ export const getState = (stateId: string) => {
     .get()
     .then((doc) => {
       return Promise.resolve(doc.data());
+    });
+};
+
+export const getStatesAsDict = () => {
+  return db
+    .collection("states")
+    .get()
+    .then((doc) => {
+      if (!doc.empty) {
+        return Promise.resolve(
+          doc.docs.reduce((acc, docActual) => {
+            const data = docActual.data();
+            return {
+              ...acc,
+              [docActual.id]: data,
+            };
+          }, {})
+        );
+      }
+      return Promise.resolve({});
     });
 };
 
