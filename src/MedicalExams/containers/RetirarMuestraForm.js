@@ -18,15 +18,17 @@ export default function RetirarMuestraForm(props) {
         if(formData.name===""){
             toast.warning("Debe ingresar los datos de quien retira la muestra");
         }else{
+            setIsLoading(true);
             try {
               const medicalSample = await actions.getMedicalSample(exam.id);
               await actions.updateMedicalSample(medicalSample.id, { retiradoPor: formData.name });
               await actions.setStateEsperandoLote(exam.id, user.displayName);
-              await actions.setStateEnLote(user.displayName) 
+              await actions.setStateEnLote(user.displayName);
             } catch (e) {
               console.error(e);
             } finally {
               setReloading((v) => !v);
+              setIsLoading(false);
               setShowModal(false);
             }
         }
