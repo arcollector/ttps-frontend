@@ -6,7 +6,7 @@ import * as actions from '../actions';
 
 export function Charts() {
 
-  // gráfico de barras horizontal de Cantidad de estudios por tipo
+  // gráfico de barras horizontal de Cantidad de estudios por tipo //probando
 
   const [cantExoma, setExoma] = useState(null);
   const [cantGenoma, setGenoma] = useState(null);
