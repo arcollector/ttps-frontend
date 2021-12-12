@@ -1,38 +1,59 @@
-import React from 'react';
-import * as SemanticUi from 'semantic-ui-react';
-import * as yup from 'yup';
+import React from "react";
+import * as SemanticUi from "semantic-ui-react";
+import * as yup from "yup";
+import moment from "moment";
 
-import { FormInput } from '../../shared/components/FormInput';
-import { FormTextArea } from '../../shared/components/FormTextArea';
-import { FormDropdown, Item } from '../../shared/components/FormDropdown';
-import { FormDatePicker } from '../../shared/components/FormDatePicker';
-import { Patient, emptyPatient } from '../interfaces/types';
-import { validators, schema } from '../interfaces';
-import { actions as actionsInsurers } from '../../Insurers';
+import { FormInput } from "../../shared/components/FormInput";
+import { FormTextArea } from "../../shared/components/FormTextArea";
+import { FormDropdown, Item } from "../../shared/components/FormDropdown";
+import { FormDatePicker } from "../../shared/components/FormDatePicker";
+import { Patient, emptyPatient } from "../interfaces/types";
+import {
+  Tutor,
+  emptyTutor,
+  validators as tutorValidators,
+  schema as tutorSchema,
+} from "../../Tutors";
+import { validators, schema } from "../interfaces";
+import { actions as actionsInsurers } from "../../Insurers";
 
 type Props = {
-  values?: Patient,
-  onSubmitError: (errors: string[]) => any,
-  onSubmit: (values: Patient) => any,
-  isLoading: boolean,
-  buttonText: string,
-  disableDni?: boolean,
+  values?: Patient;
+  tutorValues?: Tutor;
+  onSubmitError: (errors: string[]) => any;
+  onSubmit: (values: Patient, tutorValues?: Tutor) => any;
+  isLoading: boolean;
+  buttonText: string;
+  disableDni?: boolean;
 };
 
 export function Form(props: Props) {
-  const [ formData, setFormData ] = React.useState<Patient>(props.values || emptyPatient);
+  const [formData, setFormData] = React.useState<Patient>(
+    props.values || emptyPatient
+  );
+  const [formTutorData, setFormTutorData] = React.useState<Tutor>(
+    props.tutorValues || emptyTutor
+  );
 
   React.useEffect(() => {
     if (props.values) {
       setFormData(props.values);
     }
   }, [props.values]);
+  React.useEffect(() => {
+    if (props.tutorValues) {
+      setFormTutorData(props.tutorValues);
+    }
+  }, [props.tutorValues]);
 
   const onChange = (name: string, value: string) => {
     setFormData((v) => ({ ...v, [name]: value }));
   };
+  const onChangeTutor = (name: string, value: string) => {
+    setFormTutorData((v) => ({ ...v, [name.replace("tutor_", "")]: value }));
+  };
 
-  const [ insurersAsItems, setInsurersAsItems ] = React.useState<Item[]>([]);
+  const [insurersAsItems, setInsurersAsItems] = React.useState<Item[]>([]);
   React.useEffect(() => {
     (async () => {
       const insurers = await actionsInsurers.getAllInsurers();
@@ -46,19 +67,28 @@ export function Form(props: Props) {
     })();
   }, []);
 
-  const [ numSocDisabled, setNumSocDisabled ] = React.useState(
-    props.values?.idInsurer === ''
+  const [isUnderAge, setIsUnderAge] = React.useState(false);
+  React.useEffect(() => {
+    const d = moment(formData.fecnac, "DD/MM/YYYY");
+    if (d.isValid()) {
+      const now = moment();
+      setIsUnderAge(now.diff(d, "years") < 18);
+    }
+  }, [formData.fecnac]);
+
+  const [numSocDisabled, setNumSocDisabled] = React.useState(
+    props.values?.idInsurer === ""
   );
   React.useEffect(() => {
-    setNumSocDisabled(props.values?.idInsurer === '');
+    setNumSocDisabled(props.values?.idInsurer === "");
   }, [props.values?.idInsurer]);
 
   const onChangeInsurer = (_: string, item: Item | null) => {
     if (!item) {
       setFormData((v) => ({
         ...v,
-        idInsurer: '',
-        numsoc: '',
+        idInsurer: "",
+        numsoc: "",
       }));
       setNumSocDisabled(true);
     } else {
@@ -70,28 +100,43 @@ export function Form(props: Props) {
     }
   };
 
+  const [isScrollToTop, setIsScrollToTop] = React.useState(false);
   const onSubmit = React.useCallback(() => {
     if (props.isLoading) {
       return;
     }
     try {
       schema.validateSync(formData, { abortEarly: false });
-      props.onSubmit(formData);
+      // set this values because is not present formData
+      const idTutor = props.values?.idTutor || null;
+      const formDataWithIdTutor = { ...formData, idTutor };
+      if (isUnderAge) {
+        tutorSchema.validateSync(formTutorData, { abortEarly: false });
+        props.onSubmit(formDataWithIdTutor, formTutorData);
+      } else {
+        props.onSubmit(formDataWithIdTutor);
+      }
     } catch (e) {
+      setIsScrollToTop(true);
       props.onSubmitError((e as yup.ValidationError).errors);
       return;
     }
   }, [
     formData,
+    formTutorData,
+    isUnderAge,
     props.onSubmitError,
-    props.onSubmit
+    props.onSubmit,
   ]);
+  React.useEffect(() => {
+    if (isScrollToTop) {
+      window.scrollTo({ top: 0, left: 0 });
+      setIsScrollToTop(false);
+    }
+  }, [isScrollToTop]);
 
   return (
-    <SemanticUi.Form
-      data-testid="form"
-      onSubmit={onSubmit}
-    >
+    <SemanticUi.Form data-testid="form" onSubmit={onSubmit}>
       <FormInput
         label="Nombre"
         name="nombre"
@@ -134,6 +179,67 @@ export function Form(props: Props) {
         value={formData.fecnac}
         required
       />
+
+      {isUnderAge && (
+        <div className="ui segment">
+          <h3>Datos del tutor</h3>
+
+          <FormInput
+            label="Nombre"
+            name="tutor_nombre"
+            placeholder="Nombre del tutor"
+            type="text"
+            onChange={onChangeTutor}
+            value={formTutorData.nombre}
+            validator={tutorValidators.nombre}
+            required
+          />
+
+          <FormInput
+            label="Apellido"
+            name="tutor_apellido"
+            placeholder="Apellido del tutor"
+            type="text"
+            onChange={onChangeTutor}
+            value={formTutorData.apellido}
+            validator={tutorValidators.apellido}
+            required
+          />
+
+          <FormInput
+            label="Telefono"
+            name="tutor_telefono"
+            placeholder="Telefono del tutor"
+            type="number"
+            onChange={onChangeTutor}
+            value={formTutorData.telefono}
+            validator={tutorValidators.telefono}
+            required
+          />
+
+          <FormInput
+            label="Correo Electronico"
+            name="tutor_email"
+            placeholder="Correo Electronico del tutor"
+            type="email"
+            onChange={onChangeTutor}
+            value={formTutorData.email}
+            validator={tutorValidators.email}
+            required
+          />
+
+          <FormInput
+            label="Direccion"
+            name="tutor_direccion"
+            placeholder="Direccion del tutor"
+            type="text"
+            onChange={onChangeTutor}
+            value={formTutorData.direccion}
+            validator={tutorValidators.direccion}
+            required
+          />
+        </div>
+      )}
 
       <FormInput
         label="Telefono"

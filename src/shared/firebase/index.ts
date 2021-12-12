@@ -1,6 +1,6 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/storage';
-import 'firebase/compat/firestore';
+import firebase from "firebase/compat/app";
+import "firebase/compat/storage";
+import "firebase/compat/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCLjW-3g5O6-TzefgKjqc6Mqh9TOg-fJvo",
@@ -9,27 +9,22 @@ const firebaseConfig = {
   storageBucket: "facultadtp-2dd10.appspot.com",
   messagingSenderId: "1079198003514",
   appId: "1:1079198003514:web:ca590dc26660ef36dce003",
-  measurementId: "G-HLH6HGVFEB"
+  measurementId: "G-HLH6HGVFEB",
 };
 
 export default firebase.initializeApp(firebaseConfig);
 
 export const db = firebase.firestore(firebase as any);
 
-type Collection =
-  | 'patients'
-  | 'medicExams'
-  | 'insurers'
+type Collection = "patients" | "medicExams" | "insurers" | "tutors";
 
 export const Crud = {
-
-  create<T>(collection: Collection, formData: T) {
+  create<T>(collection: Collection, formData: T): Promise<string> {
     return new Promise((resolve, reject) => {
-      db
-        .collection(collection)
+      db.collection(collection)
         .add(formData)
-        .then(() => {
-          resolve(true);
+        .then((res) => {
+          resolve(res.id);
         })
         .catch((error) => {
           console.error(error);
@@ -41,14 +36,13 @@ export const Crud = {
   getAllAsItems<T>(collection: Collection): Promise<T[]> {
     const items: T[] = [];
     return new Promise((resolve, reject) => {
-      db
-        .collection(collection)
+      db.collection(collection)
         .get()
         .then((doc) => {
           if (!doc.empty) {
             doc.docs.forEach((doc) => {
               items.push({
-                ...doc.data() as T,
+                ...(doc.data() as T),
                 id: doc.id,
               });
             });
@@ -62,11 +56,14 @@ export const Crud = {
     });
   },
 
-  getAsDoc(collection: Collection, id: string): Promise<firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
+  getAsDoc(
+    collection: Collection,
+    id: string
+  ): Promise<
+    firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
   > {
     return new Promise((resolve, reject) => {
-      db
-        .collection(collection)
+      db.collection(collection)
         .doc(id)
         .get()
         .then((doc) => {
@@ -96,10 +93,12 @@ export const Crud = {
     });
   },
 
-  update<T>(doc: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>, values: T) {
+  update<T>(
+    doc: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>,
+    values: T
+  ) {
     return new Promise((resolve, reject) => {
-      doc
-        .ref
+      doc.ref
         .set(values)
         .then(() => {
           resolve(true);
@@ -111,10 +110,11 @@ export const Crud = {
     });
   },
 
-  delete(doc: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>) {
+  delete(
+    doc: firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
+  ) {
     return new Promise((resolve, reject) => {
-      doc
-        .ref
+      doc.ref
         .delete()
         .then(() => {
           resolve(true);
@@ -128,9 +128,8 @@ export const Crud = {
 
   getAllBy<T>(collection: Collection, tuple: [keyof T, string]): Promise<T[]> {
     return new Promise((resolve, reject) => {
-      db
-        .collection(collection)
-        .where(tuple[0] as string, '==', tuple[1])
+      db.collection(collection)
+        .where(tuple[0] as string, "==", tuple[1])
         .get()
         .then((doc) => {
           if (doc.empty) {
@@ -149,5 +148,4 @@ export const Crud = {
         });
     });
   },
-
 };

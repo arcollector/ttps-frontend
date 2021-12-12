@@ -1,17 +1,19 @@
-import React from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import React from "react";
+import { useParams, useHistory } from "react-router-dom";
 
-import { Form } from '../components/Form';
-import { FormDeletion } from '../../shared/components/FormDeletion';
-import { ErrorMessage } from '../../shared/components/ErrorMessage';
-import { Patient, emptyPatient } from '../interfaces/types';
-import * as actions from '../actions';
+import { Form } from "../components/Form";
+import { FormDeletion } from "../../shared/components/FormDeletion";
+import { ErrorMessage } from "../../shared/components/ErrorMessage";
+import { Patient, emptyPatient } from "../interfaces/types";
+import * as actions from "../actions";
+import { Tutor, emptyTutor, actions as tutorActions } from "../../Tutors";
 
 export function Single() {
   const history = useHistory();
 
-  const { id : patientId } = useParams<{ id: string }>();
-  const [ patient, setPatient ] = React.useState<Patient>(emptyPatient);
+  const { id: patientId } = useParams<{ id: string }>();
+  const [patient, setPatient] = React.useState<Patient>(emptyPatient);
+  const [patientTutor, setPatientTutor] = React.useState<Tutor>(emptyTutor);
 
   React.useEffect(() => {
     (async () => {
@@ -19,22 +21,30 @@ export function Single() {
     })();
   }, [patientId]);
 
-  const [ isLoadingForUpdate, setIsLoadingForUpdate ] = React.useState(false);
-  const [ isLoadingForDelete, setIsLoadingForDelete ] = React.useState(false);
-  const [ errors, setErrros ] = React.useState<string[]>([]);
+  React.useEffect(() => {
+    (async () => {
+      if (patient.idTutor) {
+        setPatientTutor(await tutorActions.getTutor(patient.idTutor));
+      }
+    })();
+  }, [patient.idTutor]);
+
+  const [isLoadingForUpdate, setIsLoadingForUpdate] = React.useState(false);
+  const [isLoadingForDelete, setIsLoadingForDelete] = React.useState(false);
+  const [errors, setErrros] = React.useState<string[]>([]);
 
   const onUpdateError = (errors: string[]) => {
     setErrros(errors);
   };
 
-  const onUpdate = async (values: Patient) => {
+  const onUpdate = async (values: Patient, tutorValues?: Tutor) => {
     setErrros([]);
     setIsLoadingForUpdate(true);
-    await actions.updatePatient(patientId, values);
+    await actions.updatePatient(patientId, values, tutorValues);
     setIsLoadingForUpdate(false);
   };
 
-  const [ isDeleteMode, setIsDeleteMode ] = React.useState(false);
+  const [isDeleteMode, setIsDeleteMode] = React.useState(false);
   const onPreDelete = () => {
     setIsDeleteMode(true);
   };
@@ -42,7 +52,7 @@ export function Single() {
   const onConfirmDelete = React.useCallback(async () => {
     setIsLoadingForDelete(true);
     await actions.removePatient(patientId);
-    history.replace('/pacientes');
+    history.replace("/pacientes");
     setIsLoadingForDelete(false);
   }, [patientId]);
 
@@ -61,6 +71,7 @@ export function Single() {
 
       <Form
         values={patient}
+        tutorValues={patientTutor}
         onSubmitError={onUpdateError}
         onSubmit={onUpdate}
         isLoading={isLoadingForUpdate}
