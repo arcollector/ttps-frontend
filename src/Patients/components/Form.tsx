@@ -101,32 +101,35 @@ export function Form(props: Props) {
   };
 
   const [isScrollToTop, setIsScrollToTop] = React.useState(false);
-  const onSubmit = React.useCallback(() => {
-    if (props.isLoading) {
+  const { onSubmitError, onSubmit, isLoading, values } = props;
+  const onFormSubmit = React.useCallback(() => {
+    if (isLoading) {
       return;
     }
     try {
       schema.validateSync(formData, { abortEarly: false });
       // set this values because is not present formData
-      const idTutor = props.values?.idTutor || null;
+      const idTutor = values?.idTutor || null;
       const formDataWithIdTutor = { ...formData, idTutor };
       if (isUnderAge) {
         tutorSchema.validateSync(formTutorData, { abortEarly: false });
-        props.onSubmit(formDataWithIdTutor, formTutorData);
+        onSubmit(formDataWithIdTutor, formTutorData);
       } else {
-        props.onSubmit(formDataWithIdTutor);
+        onSubmit(formDataWithIdTutor);
       }
     } catch (e) {
       setIsScrollToTop(true);
-      props.onSubmitError((e as yup.ValidationError).errors);
+      onSubmitError((e as yup.ValidationError).errors);
       return;
     }
   }, [
+    isLoading,
     formData,
     formTutorData,
+    values,
     isUnderAge,
-    props.onSubmitError,
-    props.onSubmit,
+    onSubmitError,
+    onSubmit,
   ]);
   React.useEffect(() => {
     if (isScrollToTop) {
@@ -136,7 +139,7 @@ export function Form(props: Props) {
   }, [isScrollToTop]);
 
   return (
-    <SemanticUi.Form data-testid="form" onSubmit={onSubmit}>
+    <SemanticUi.Form data-testid="form" onSubmit={onFormSubmit}>
       <FormInput
         label="Nombre"
         name="nombre"

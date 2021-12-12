@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { Bar } from 'react-chartjs-2';
-import { Line } from 'react-chartjs-2';
-import '../styles/charts.scss';
-import * as actions from '../actions';
+import React, { useEffect, useState } from "react";
+import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
+import "../styles/charts.scss";
+import * as actions from "../actions";
 
 export function Charts() {
-
   // gráfico de barras horizontal de Cantidad de estudios por tipo //probando
 
   const [cantExoma, setExoma] = useState(null);
@@ -16,34 +15,40 @@ export function Charts() {
 
   useEffect(() => {
     (async () => {
-	const sums = await actions.getPathologies();
-        setExoma(sums.sumExoma);
-        setGenoma(sums.sumGenoma);
-        setCarrier(sums.sumCarrier);
-        setCariotipo(sums.sumCariotipo);
-        setArray(sums.sumArray);
+      const sums = await actions.getPathologies();
+      setExoma(sums.sumExoma);
+      setGenoma(sums.sumGenoma);
+      setCarrier(sums.sumCarrier);
+      setCariotipo(sums.sumCariotipo);
+      setArray(sums.sumArray);
     })();
   }, []);
 
   const data = {
-    labels: ['Exoma', 'Genoma Mitocondrial Completo', 'Carrier de Enfermedades Monogenicas', 'Cariotipo', 'Array CGH'],
+    labels: [
+      "Exoma",
+      "Genoma Mitocondrial Completo",
+      "Carrier de Enfermedades Monogenicas",
+      "Cariotipo",
+      "Array CGH",
+    ],
     datasets: [
       {
-        label: '# de estudios',
+        label: "# de estudios",
         data: [cantExoma, cantGenoma, cantCarrier, cantCariotipo, cantArray],
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
         ],
         borderWidth: 1,
       },
@@ -51,7 +56,7 @@ export function Charts() {
   };
 
   const options = {
-    indexAxis: 'y',
+    indexAxis: "y",
     elements: {
       bar: {
         borderWidth: 2,
@@ -60,7 +65,7 @@ export function Charts() {
     responsive: true,
     plugins: {
       legend: {
-        position: 'right',
+        position: "right",
       },
     },
   };
@@ -70,23 +75,23 @@ export function Charts() {
   const [tiemposAño, setTiemposAño] = useState(null);
   const [tiemposDia, setTiemposDia] = useState(null);
 
-      useEffect(() => {
-	(async () => {
-		const añoTiempo = await actions.getYearTimes();
-        	setTiemposDia(Object.values(añoTiempo));
-	        setTiemposAño(Object.keys(añoTiempo));
-	})();
-      }, []);
+  useEffect(() => {
+    (async () => {
+      const añoTiempo = await actions.getYearTimes();
+      setTiemposDia(Object.values(añoTiempo));
+      setTiemposAño(Object.keys(añoTiempo));
+    })();
+  }, []);
 
   const dataTiempos = {
     labels: tiemposAño,
     datasets: [
       {
-        label: '# de días',
+        label: "# de días",
         data: tiemposDia,
         fill: false,
-        backgroundColor: 'rgb(255, 99, 132)',
-        borderColor: 'rgba(255, 99, 132, 0.2)',
+        backgroundColor: "rgb(255, 99, 132)",
+        borderColor: "rgba(255, 99, 132, 0.2)",
       },
     ],
   };
@@ -94,9 +99,9 @@ export function Charts() {
   const optionsTiempo = {
     scales: {
       y: {
-        beginAtZero: true
-      }
-    }
+        beginAtZero: true,
+      },
+    },
   };
 
   // gráfico de barras vertical de Cantidad de estudios por mes
@@ -105,34 +110,34 @@ export function Charts() {
   const [mesEstudios, setMesEstudios] = useState(null);
 
   useEffect(() => {
-	  (async () => {
-		const estudiosMes = await actions.getMonthStudies();
-        	setCantEstudios(Object.values(estudiosMes));
-	        setMesEstudios(Object.keys(estudiosMes));
-	  })();
+    (async () => {
+      const estudiosMes = await actions.getMonthStudies();
+      setCantEstudios(Object.values(estudiosMes));
+      setMesEstudios(Object.keys(estudiosMes));
+    })();
   }, []);
 
   const dataEstudiosMes = {
     labels: mesEstudios,
     datasets: [
       {
-        label: '# de estudios',
+        label: "# de estudios",
         data: cantEstudios,
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)',
+          "rgba(255, 99, 132, 0.2)",
+          "rgba(54, 162, 235, 0.2)",
+          "rgba(255, 206, 86, 0.2)",
+          "rgba(75, 192, 192, 0.2)",
+          "rgba(153, 102, 255, 0.2)",
+          "rgba(255, 159, 64, 0.2)",
         ],
         borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)',
+          "rgba(255, 99, 132, 1)",
+          "rgba(54, 162, 235, 1)",
+          "rgba(255, 206, 86, 1)",
+          "rgba(75, 192, 192, 1)",
+          "rgba(153, 102, 255, 1)",
+          "rgba(255, 159, 64, 1)",
         ],
         borderWidth: 1,
       },
@@ -153,28 +158,31 @@ export function Charts() {
 
   return (
     <>
-      <div class="ui container">
-        <div class="ui segments">
-          <div class="ui segment">
-            <div className='header'>
-              <h1 className='title'>Cantidad de estudios por tipo</h1>
+      <div className="ui container">
+        <div className="ui segments">
+          <div className="ui segment">
+            <div className="header">
+              <h1 className="title">Cantidad de estudios por tipo</h1>
             </div>
             <Bar data={data} options={options} />
           </div>
-          <div class="ui segment">
-            <div className='header'>
-              <h1 className='title'>Tiempos que demora el estudio desde la toma de muestra hasta entregado al médico derivante, por año</h1>
+          <div className="ui segment">
+            <div className="header">
+              <h1 className="title">
+                Tiempos que demora el estudio desde la toma de muestra hasta
+                entregado al médico derivante, por año
+              </h1>
             </div>
             <Line data={dataTiempos} options={optionsTiempo} />
           </div>
-          <div class="ui segment">
-            <div className='header'>
-              <h1 className='title'>Cantidad de estudios por mes</h1>
+          <div className="ui segment">
+            <div className="header">
+              <h1 className="title">Cantidad de estudios por mes</h1>
             </div>
             <Bar data={dataEstudiosMes} options={optionsEstudiosMes} />
           </div>
         </div>
       </div>
     </>
-  )
+  );
 }

@@ -1,22 +1,24 @@
-import React from 'react';
-import * as SemanticUi from 'semantic-ui-react';
-import * as yup from 'yup';
+import React from "react";
+import * as SemanticUi from "semantic-ui-react";
+import * as yup from "yup";
 
-import { FormTextArea } from '../../shared/components/FormTextArea';
-import { FormInput } from '../../shared/components/FormInput';
-import { Insurer, emptyInsurer } from '../interfaces/types';
-import { validators, schema } from '../interfaces';
+import { FormTextArea } from "../../shared/components/FormTextArea";
+import { FormInput } from "../../shared/components/FormInput";
+import { Insurer, emptyInsurer } from "../interfaces/types";
+import { validators, schema } from "../interfaces";
 
 type Props = {
-  values?: Insurer,
-  onSubmitError: (errors: string[]) => any,
-  onSubmit: (values: Insurer) => any,
-  isLoading: boolean,
-  buttonText: string,
+  values?: Insurer;
+  onSubmitError: (errors: string[]) => any;
+  onSubmit: (values: Insurer) => any;
+  isLoading: boolean;
+  buttonText: string;
 };
 
 export function Form(props: Props) {
-  const [ formData, setFormData ] = React.useState<Insurer>(props.values || emptyInsurer);
+  const [formData, setFormData] = React.useState<Insurer>(
+    props.values || emptyInsurer
+  );
 
   React.useEffect(() => {
     if (props.values) {
@@ -28,28 +30,22 @@ export function Form(props: Props) {
     setFormData((v) => ({ ...v, [name]: value }));
   };
 
-  const onSubmit = React.useCallback(() => {
-    if (props.isLoading) {
+  const { onSubmitError, isLoading, onSubmit } = props;
+  const onFormSubmit = React.useCallback(() => {
+    if (isLoading) {
       return;
     }
     try {
       schema.validateSync(formData, { abortEarly: false });
-      props.onSubmit(formData);
+      onSubmit(formData);
     } catch (e) {
-      props.onSubmitError((e as yup.ValidationError).errors);
+      onSubmitError((e as yup.ValidationError).errors);
       return;
     }
-  }, [
-    formData,
-    props.onSubmitError,
-    props.onSubmit
-  ]);
+  }, [formData, isLoading, onSubmitError, onSubmit]);
 
   return (
-    <SemanticUi.Form
-      data-testid="form"
-      onSubmit={onSubmit}
-    >
+    <SemanticUi.Form data-testid="form" onSubmit={onFormSubmit}>
       <FormTextArea
         label="Nombre de la obra social"
         name="nombre"

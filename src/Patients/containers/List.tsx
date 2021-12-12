@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, Icon, Button } from "semantic-ui-react";
+import { Icon, Button } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
 import { Patient } from "../interfaces/types";

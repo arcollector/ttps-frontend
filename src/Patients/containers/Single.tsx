@@ -54,7 +54,7 @@ export function Single() {
     await actions.removePatient(patientId);
     history.replace("/pacientes");
     setIsLoadingForDelete(false);
-  }, [patientId]);
+  }, [history, patientId]);
 
   const onCancelDelete = () => {
     setIsDeleteMode(false);
