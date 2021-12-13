@@ -18,7 +18,7 @@ export function FormInput(props: Props) {
   const [isError, setIsError] = React.useState(false);
   const [errorsMessage, setErrorsMessage] = React.useState<string[]>([]);
 
-  const { onChange, validator, name } = props;
+  const { onChange, validator } = props;
   const onFormInputChange = React.useCallback(
     (_, data: InputOnChangeData) => {
       if (validator) {
@@ -31,9 +31,9 @@ export function FormInput(props: Props) {
           setErrorsMessage((e as yup.ValidationError).errors);
         }
       }
-      onChange(name, data.value);
+      onChange(props.name, data.value);
     },
-    [onChange, validator, name]
+    [onChange, validator, props.name]
   );
 
   return (

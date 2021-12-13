@@ -67,3 +67,13 @@ export const validators = {
   idInsurer: yup.reach(schema, "idInsurer"),
   numsoc: yup.reach(schema, "numsoc"),
 };
+
+export const schemaGuestMode = yup.object().shape({
+  id: validators.id,
+  email: validators.email,
+  telefono: validators.telefono,
+  nombre: validators.nombre,
+  apellido: validators.apellido,
+  dni: validators.dni,
+  fecnac: validators.fecnac,
+});

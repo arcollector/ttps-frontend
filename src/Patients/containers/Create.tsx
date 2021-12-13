@@ -7,11 +7,16 @@ import { Patient } from "../interfaces";
 import { Tutor } from "../../Tutors";
 import * as actions from "../actions";
 
-export function Create() {
+type Props = {
+  isGuestMode: boolean;
+};
+
+export function Create(props: Props) {
   const history = useHistory();
 
   const [isLoading, setIsLoading] = React.useState(false);
   const [errors, setErrros] = React.useState<string[]>([]);
+  const title = props.isGuestMode ? "Formulario de registro" : "Crear paciente";
 
   const onSubmitError = (errors: string[]) => {
     setErrros(errors);
@@ -23,16 +28,20 @@ export function Create() {
       setIsLoading(true);
       const success = await actions.createPatient(formData, formDataTutor);
       if (success) {
-        history.replace("/pacientes");
+        if (props.isGuestMode) {
+          history.replace("/registro-clave", formData);
+        } else {
+          history.replace("/pacientes");
+        }
       }
       setIsLoading(false);
     },
-    [history]
+    [history, props.isGuestMode]
   );
 
   return (
     <div className="ui segment">
-      <h1>Crear paciente</h1>
+      <h1>{title}</h1>
 
       <ErrorMessage heading="No se pudo crear el paciente" errors={errors} />
 
@@ -40,7 +49,8 @@ export function Create() {
         onSubmitError={onSubmitError}
         onSubmit={onSubmit}
         isLoading={isLoading}
-        buttonText="Crear paciente"
+        buttonText={title}
+        isGuestMode={props.isGuestMode}
       />
     </div>
   );

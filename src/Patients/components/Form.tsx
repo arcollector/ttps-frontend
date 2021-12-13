@@ -14,7 +14,7 @@ import {
   validators as tutorValidators,
   schema as tutorSchema,
 } from "../../Tutors";
-import { validators, schema } from "../interfaces";
+import { validators, schema, schemaGuestMode } from "../interfaces";
 import { actions as actionsInsurers } from "../../Insurers";
 
 type Props = {
@@ -25,6 +25,7 @@ type Props = {
   isLoading: boolean;
   buttonText: string;
   disableDni?: boolean;
+  isGuestMode?: boolean;
 };
 
 export function Form(props: Props) {
@@ -101,15 +102,19 @@ export function Form(props: Props) {
   };
 
   const [isScrollToTop, setIsScrollToTop] = React.useState(false);
-  const { onSubmitError, onSubmit, isLoading, values } = props;
+  const { onSubmitError, onSubmit } = props;
   const onFormSubmit = React.useCallback(() => {
-    if (isLoading) {
+    if (props.isLoading) {
       return;
     }
     try {
-      schema.validateSync(formData, { abortEarly: false });
+      if (props.isGuestMode) {
+        schemaGuestMode.validateSync(formData, { abortEarly: false });
+      } else {
+        schema.validateSync(formData, { abortEarly: false });
+      }
       // set this values because is not present formData
-      const idTutor = values?.idTutor || null;
+      const idTutor = props.values?.idTutor || null;
       const formDataWithIdTutor = { ...formData, idTutor };
       if (isUnderAge) {
         tutorSchema.validateSync(formTutorData, { abortEarly: false });
@@ -123,13 +128,14 @@ export function Form(props: Props) {
       return;
     }
   }, [
-    isLoading,
+    props.isLoading,
     formData,
     formTutorData,
-    values,
+    props.values,
     isUnderAge,
     onSubmitError,
     onSubmit,
+    props.isGuestMode,
   ]);
   React.useEffect(() => {
     if (isScrollToTop) {
@@ -266,37 +272,43 @@ export function Form(props: Props) {
         required
       />
 
-      <FormDropdown
-        label="Obra social"
-        name="idInsurer"
-        placeholder="Obra social del paciente"
-        onChange={onChangeInsurer}
-        value={formData.idInsurer}
-        values={insurersAsItems}
-        validator={validators.idInsurer}
-        nullyfiedText="No tiene obra social"
-      />
+      {!props.isGuestMode && (
+        <FormDropdown
+          label="Obra social"
+          name="idInsurer"
+          placeholder="Obra social del paciente"
+          onChange={onChangeInsurer}
+          value={formData.idInsurer}
+          values={insurersAsItems}
+          validator={validators.idInsurer}
+          nullyfiedText="No tiene obra social"
+        />
+      )}
 
-      <FormInput
-        label="Numero de la obra social"
-        name="numsoc"
-        placeholder="Numero de la obra social del paciente"
-        type="text"
-        onChange={onChange}
-        value={formData.numsoc}
-        validator={validators.numsoc}
-        disabled={numSocDisabled}
-      />
+      {!props.isGuestMode && (
+        <FormInput
+          label="Numero de la obra social"
+          name="numsoc"
+          placeholder="Numero de la obra social del paciente"
+          type="text"
+          onChange={onChange}
+          value={formData.numsoc}
+          validator={validators.numsoc}
+          disabled={numSocDisabled}
+        />
+      )}
 
-      <FormTextArea
-        label="Historia clinica"
-        name="historial"
-        placeholder="Historia clinica del paciente"
-        onChange={onChange}
-        value={formData.historial}
-        validator={validators.historial}
-        required
-      />
+      {!props.isGuestMode && (
+        <FormTextArea
+          label="Historia clinica"
+          name="historial"
+          placeholder="Historia clinica del paciente"
+          onChange={onChange}
+          value={formData.historial}
+          validator={validators.historial}
+          required
+        />
+      )}
 
       <SemanticUi.Button
         className="primary"

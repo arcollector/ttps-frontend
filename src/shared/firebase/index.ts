@@ -16,7 +16,7 @@ export default firebase.initializeApp(firebaseConfig);
 
 export const db = firebase.firestore(firebase as any);
 
-type Collection = "patients" | "medicExams" | "insurers" | "tutors";
+type Collection = "patients" | "medicExams" | "insurers" | "tutors" | "users";
 
 export const Crud = {
   create<T>(collection: Collection, formData: T): Promise<string> {

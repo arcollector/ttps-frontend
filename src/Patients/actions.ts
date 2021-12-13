@@ -44,18 +44,14 @@ export const updatePatient = async (
   formDataTutor?: Tutor
 ) => {
   let idTutor: Patient["idTutor"] = null;
-  console.log(patientId, formData, formDataTutor);
   try {
     if (formData.idTutor && formDataTutor) {
       idTutor = formData.idTutor;
-      console.log("updading");
       await TutorsService.update(idTutor, formDataTutor);
     } else if (formData.idTutor && !formDataTutor) {
       idTutor = null;
-      console.log("rem,oving");
       await TutorsService.remove(formData.idTutor);
     } else if (formDataTutor) {
-      console.log("creating");
       idTutor = await TutorsService.create(formDataTutor);
     }
     await PatientsService.update(patientId, {
