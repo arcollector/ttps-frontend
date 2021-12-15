@@ -2,10 +2,11 @@ import React from "react";
 import { Segment, Message } from "semantic-ui-react";
 import { useHistory } from "react-router-dom";
 
-import { User } from "../interfaces";
-import { Form } from "../components/Form";
+import { User, emptyUser } from "../interfaces";
+import { FormLogin } from "../components/FormLogin";
 import { ErrorMessage } from "../../shared/components/ErrorMessage";
 import * as actions from "../actions";
+import { AuthContext } from "../../contexts";
 
 export function Access() {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -16,18 +17,22 @@ export function Access() {
     setErrros(errors);
   };
 
+  const authContext = React.useContext(AuthContext);
   const onSubmit = React.useCallback(
     async (formData: User) => {
       setErrros([]);
       setIsLoading(true);
-      const user = await actions.getUserByUsername(formData.username);
-      const success = user.pass === formData.pass;
+      const success = await actions.loginFirebaseAuth(
+        formData.email,
+        formData.pass
+      );
       if (success) {
-        history.replace("/");
+        const user = await actions.getUserByUsername(formData.username);
+        if (user) {
+          authContext.setUserFromFirestore(user);
+        }
       } else {
-        setErrros([
-          "Credenciales ingresadas no corresponde a un usuario registrado",
-        ]);
+        setErrros(["Fallo el autenticado estripetosamente"]);
       }
       setIsLoading(false);
     },
@@ -48,7 +53,7 @@ export function Access() {
         errors={errors}
       />
 
-      <Form
+      <FormLogin
         onSubmit={onSubmit}
         onSubmitError={onSubmitError}
         isLoading={isLoading}

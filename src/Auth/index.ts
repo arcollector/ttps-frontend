@@ -7,3 +7,5 @@ export const Auth = {
   RegisterPassword,
   Access,
 };
+
+export * from "./interfaces";

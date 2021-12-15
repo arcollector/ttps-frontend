@@ -4,7 +4,7 @@ import { useHistory, useLocation } from "react-router-dom";
 
 import { Patient } from "../../Patients";
 import { User } from "../interfaces";
-import { Form } from "../components/Form";
+import { FormRegister } from "../components/FormRegister";
 import { ErrorMessage } from "../../shared/components/ErrorMessage";
 import * as actions from "../actions";
 
@@ -15,6 +15,7 @@ export function RegisterPassword() {
   const user: User = {
     id: "",
     username: patient ? patient.dni : "",
+    email: patient ? patient.email : "",
     pass: "",
     role: "patient",
   };
@@ -28,13 +29,15 @@ export function RegisterPassword() {
     async (formData: User) => {
       setErrros([]);
       setIsLoading(true);
-      const success = await actions.createUser(formData);
-      if (success) {
-        history.replace("/");
-      }
+      const success = await actions.registerFirebaseAuth(
+        user.email,
+        formData.pass
+      );
+      await actions.createUser(formData);
+      history.replace("/");
       setIsLoading(false);
     },
-    [history]
+    [history, user.email]
   );
   return (
     <Segment>
@@ -47,7 +50,7 @@ export function RegisterPassword() {
 
       <ErrorMessage heading="No se pudo crear su usuario" errors={errors} />
 
-      <Form
+      <FormRegister
         values={user}
         onSubmit={onSubmit}
         onSubmitError={onSubmitError}

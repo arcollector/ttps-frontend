@@ -5,6 +5,11 @@ export const schema = yup.object().shape({
 
   username: yup.string().required("El nombre de usuario es obligatorio"),
 
+  email: yup
+    .string()
+    .email("Email ingresado es invalido")
+    .required("Email no puede estar vacio"),
+
   pass: yup
     .string()
     .required("La clave de acceso es obligatoria")
@@ -14,5 +19,6 @@ export const schema = yup.object().shape({
 export const validators = {
   id: yup.reach(schema, "id"),
   username: yup.reach(schema, "username"),
+  email: yup.reach(schema, "email"),
   pass: yup.reach(schema, "pass"),
 };

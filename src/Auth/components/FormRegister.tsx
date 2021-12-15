@@ -13,7 +13,7 @@ type Props = {
   isRegisterMode?: boolean;
 };
 
-export function Form(props: Props) {
+export function FormRegister(props: Props) {
   const [formData, setFormData] = React.useState<User>(
     props.values
       ? {

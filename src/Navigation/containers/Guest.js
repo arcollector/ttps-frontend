@@ -20,48 +20,46 @@ export function Guest() {
   };
 
   return (
-    <Router>
-      <Switch>
-        <Route path="/" exact>
-          <div
-            className="auth"
-            style={{ backgroundImage: `url(${BackgroundApp})` }}
-          >
-            <div className="auth__dark" />
-            <div className="auth__box">
-              <div className="auth__box__logo">
-                <img src={LogoAuth} alt="logo" />
-              </div>
-
-              {selectedForm === "login" && (
-                <LoginForm setSelectedForm={handlerForm} />
-              )}
-              {selectedForm === "register" && (
-                <RegisterForm setSelectedForm={handlerForm} />
-              )}
-              {selectedForm === "auth" && (
-                <AuthOptions setSelectedForm={handlerForm} />
-              )}
+    <Switch>
+      <Route path="/" exact>
+        <div
+          className="auth"
+          style={{ backgroundImage: `url(${BackgroundApp})` }}
+        >
+          <div className="auth__dark" />
+          <div className="auth__box">
+            <div className="auth__box__logo">
+              <img src={LogoAuth} alt="logo" />
             </div>
+
+            {selectedForm === "login" && (
+              <LoginForm setSelectedForm={handlerForm} />
+            )}
+            {selectedForm === "register" && (
+              <RegisterForm setSelectedForm={handlerForm} />
+            )}
+            {selectedForm === "auth" && (
+              <AuthOptions setSelectedForm={handlerForm} />
+            )}
           </div>
-        </Route>
+        </div>
+      </Route>
 
-        <Route path="/registro" exact>
-          <Auth.Register />
-        </Route>
+      <Route path="/registro" exact>
+        <Auth.Register />
+      </Route>
 
-        <Route path="/registro-clave" exact>
-          <Auth.RegisterPassword />
-        </Route>
+      <Route path="/registro-clave" exact>
+        <Auth.RegisterPassword />
+      </Route>
 
-        <Route path="/ingresar" exact>
-          <Auth.Access />
-        </Route>
+      <Route path="/ingresar" exact>
+        <Auth.Access />
+      </Route>
 
-        <Route path="*">
-          <NotFound />
-        </Route>
-      </Switch>
-    </Router>
+      <Route path="*">
+        <NotFound />
+      </Route>
+    </Switch>
   );
 }
