@@ -13,9 +13,11 @@ import LogoAuth from "../Guest/assets/logo.png";
 import "../Guest/styles/Guest.scss";
 
 export function Guest() {
-  const [selectedForm, setSelectedForm] = useState("auth");
+  const [selectedForm, setSelectedForm] = useState<
+    "auth" | "login" | "register"
+  >("auth");
 
-  const handlerForm = (form) => {
+  const handlerForm = (form: typeof selectedForm) => {
     setSelectedForm(form);
   };
 

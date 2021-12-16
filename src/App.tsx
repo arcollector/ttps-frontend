@@ -15,16 +15,19 @@ function InnerApp() {
     null
   );
 
-  firebase.auth().onAuthStateChanged((currentUser) => {
-    if (currentUser && currentUser.emailVerified) {
-      setUserAuthenticated(currentUser);
-      history.replace("/");
-    } else if (!currentUser) {
-      setUserAuthenticated(null);
-      setUserFromFirestore(null);
-      history.replace("/");
-    }
-  });
+  React.useEffect(() => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((currentUser) => {
+      if (currentUser && currentUser.emailVerified) {
+        setUserAuthenticated(currentUser);
+      } else if (!currentUser) {
+        setUserAuthenticated(null);
+        setUserFromFirestore(null);
+        setIsLogged(false);
+        history.replace("/");
+      }
+    });
+    return unsubscribe;
+  }, [history]);
 
   const authContextReducer = React.useMemo(
     () => ({
@@ -38,9 +41,17 @@ function InnerApp() {
     [userFromFirestore]
   );
 
+  const [isLogged, setIsLogged] = React.useState(false);
+  React.useEffect(() => {
+    if (userAuthenticated && userFromFirestore) {
+      setIsLogged(true);
+      history.replace("/");
+    }
+  }, [userAuthenticated, userFromFirestore, history]);
+
   return (
     <AuthContext.Provider value={authContextReducer}>
-      {userAuthenticated && userFromFirestore ? (
+      {userAuthenticated && userFromFirestore && isLogged ? (
         <Navigation.Host
           user={userAuthenticated}
           userFromFirestore={userFromFirestore}
