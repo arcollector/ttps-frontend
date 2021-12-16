@@ -4,6 +4,7 @@ export type User = {
   username: string;
   pass: string;
   role: "patient" | "admin";
+  idPatient: string | null;
 };
 
 export const emptyUser: User = {
@@ -12,4 +13,5 @@ export const emptyUser: User = {
   username: "",
   pass: "",
   role: "patient",
+  idPatient: null,
 };

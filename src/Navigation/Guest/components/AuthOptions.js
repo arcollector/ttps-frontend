@@ -5,7 +5,7 @@ import { Button } from "semantic-ui-react";
 import "../styles/AuthOptions.scss";
 
 export default function AuthOptions(props) {
-  const { setSelectedForm } = props;
+  //const { setSelectedForm } = props;
   return (
     <div className="auth-options">
       <h2>Registrate para consultar tus estudios</h2>
@@ -19,9 +19,9 @@ export default function AuthOptions(props) {
         Ingresar
       </Button>
 
-      <Button className="login" onClick={() => setSelectedForm("login")}>
+      {/*<Button className="login" onClick={() => setSelectedForm("login")}>
         Iniciar Sesion (Admin)
-      </Button>
+</Button>*/}
     </div>
   );
 }

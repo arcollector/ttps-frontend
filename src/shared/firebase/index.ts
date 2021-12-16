@@ -14,6 +14,8 @@ const firebaseConfig = {
 
 export default firebase.initializeApp(firebaseConfig);
 
+export type FirebaseUser = firebase.User;
+
 export const db = firebase.firestore(firebase as any);
 
 type Collection = "patients" | "medicExams" | "insurers" | "tutors" | "users";

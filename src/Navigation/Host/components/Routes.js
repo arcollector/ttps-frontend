@@ -10,11 +10,16 @@ import { Charts } from "../../../Charts";
 import Lote from "../../../Lotes/containers/Lote";
 import Payment from "../../../Payments/containers/Payment";
 import { NotFound } from "../../../NotFound";
+import { Dashboard } from "../../../Dashboard";
 
 export function Routes(props) {
   const { user } = props;
   return (
     <Switch>
+      <Route path="/" exact>
+        <Dashboard />
+      </Route>
+
       <Route path="/estudios" exact>
         <MedicalExams user={user} />
       </Route>

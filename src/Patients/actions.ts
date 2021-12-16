@@ -8,31 +8,34 @@ export const createPatient = async (
   formData: Patient,
   formDataTutor?: Tutor
 ) => {
-  let success = false;
-  let idTutor: Patient["idTutor"] = null;
+  let idPatient: string | null = null;
+  let idTutor: string | null = null;
   try {
     if (formDataTutor) {
       idTutor = await TutorsService.create(formDataTutor);
     }
-    success = await PatientsService.create({
+    idPatient = await PatientsService.create({
       ...formData,
       idTutor,
     });
-    if (success) {
-      toast.success("El paciente fue cargado correctamente");
-    } else {
-      toast.error("Ya existe un paciente con el mismo dni");
-    }
+    toast.success("El paciente fue cargado correctamente");
   } catch (error) {
-    toast.error("Error al crear el paciente");
+    console.error(error);
+    const e = error as any;
+    if (e && e.message === "DNI_NOT_AVAILABLE") {
+      toast.error("Ya existe un paciente con el mismo dni");
+    } else {
+      toast.error("Error al crear el paciente");
+    }
   }
-  return success;
+  return idPatient;
 };
 
 export const getPatient = async (patientId: string) => {
   try {
     return await PatientsService.getAsItem(patientId);
   } catch (error) {
+    console.error(error);
     toast.error(`no se pudo obtener los datos del paciente ${patientId}`);
     return emptyPatient;
   }

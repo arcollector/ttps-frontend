@@ -1,8 +1,7 @@
 import React from "react";
 import { Segment, Message } from "semantic-ui-react";
-import { useHistory } from "react-router-dom";
 
-import { User, emptyUser } from "../interfaces";
+import { User } from "../interfaces";
 import { FormLogin } from "../components/FormLogin";
 import { ErrorMessage } from "../../shared/components/ErrorMessage";
 import * as actions from "../actions";
@@ -10,7 +9,6 @@ import { AuthContext } from "../../contexts";
 
 export function Access() {
   const [isLoading, setIsLoading] = React.useState(false);
-  const history = useHistory();
 
   const [errors, setErrros] = React.useState<string[]>([]);
   const onSubmitError = (errors: string[]) => {
@@ -36,7 +34,7 @@ export function Access() {
       }
       setIsLoading(false);
     },
-    [history]
+    [authContext]
   );
 
   return (

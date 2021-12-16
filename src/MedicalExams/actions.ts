@@ -88,24 +88,27 @@ export const enviarResultado = (examId: string, displayName: string) => {
   });
 };
 
-export const getExams = () => {
-  return db
-    .collection("medicExams")
-    .get()
-    .then((doc) => {
-      if (!doc.empty) {
-        return Promise.resolve(
-          doc.docs.map((docActual) => {
-            const data = docActual.data();
-            return {
-              ...data,
-              id: docActual.id,
-            };
-          })
-        );
-      }
-      return Promise.resolve([]);
-    });
+export const getExams = (idPatient: string | null) => {
+  let query;
+  if (idPatient) {
+    query = db.collection("medicExams").where("idPatient", "==", idPatient);
+  } else {
+    query = db.collection("medicExams");
+  }
+  return query.get().then((doc) => {
+    if (!doc.empty) {
+      return Promise.resolve(
+        doc.docs.map((docActual) => {
+          const data = docActual.data();
+          return {
+            ...data,
+            id: docActual.id,
+          };
+        })
+      );
+    }
+    return Promise.resolve([]);
+  });
 };
 
 export const getExam = (examId: string) => {

@@ -3,7 +3,7 @@ import { Segment, Message } from "semantic-ui-react";
 import { useHistory, useLocation } from "react-router-dom";
 
 import { Patient } from "../../Patients";
-import { User } from "../interfaces";
+import { User, emptyUser } from "../interfaces";
 import { FormRegister } from "../components/FormRegister";
 import { ErrorMessage } from "../../shared/components/ErrorMessage";
 import * as actions from "../actions";
@@ -13,10 +13,10 @@ export function RegisterPassword() {
   const history = useHistory();
   const { state: patient } = useLocation<Patient | undefined>();
   const user: User = {
-    id: "",
+    ...emptyUser,
     username: patient ? patient.dni : "",
     email: patient ? patient.email : "",
-    pass: "",
+    idPatient: patient ? patient.id : null,
     role: "patient",
   };
 
@@ -33,8 +33,10 @@ export function RegisterPassword() {
         user.email,
         formData.pass
       );
-      await actions.createUser(formData);
-      history.replace("/");
+      if (success) {
+        await actions.createUser(formData);
+        history.replace("/");
+      }
       setIsLoading(false);
     },
     [history, user.email]

@@ -18,8 +18,10 @@ function InnerApp() {
   firebase.auth().onAuthStateChanged((currentUser) => {
     if (currentUser && currentUser.emailVerified) {
       setUserAuthenticated(currentUser);
+      history.replace("/");
     } else if (!currentUser) {
       setUserAuthenticated(null);
+      setUserFromFirestore(null);
       history.replace("/");
     }
   });
@@ -29,8 +31,11 @@ function InnerApp() {
       setUserFromFirestore(user: User) {
         setUserFromFirestore(user);
       },
+      getUserFromFirestore(): User | null {
+        return userFromFirestore;
+      },
     }),
-    []
+    [userFromFirestore]
   );
 
   return (

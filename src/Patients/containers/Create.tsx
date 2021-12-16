@@ -26,10 +26,10 @@ export function Create(props: Props) {
     async (formData: Patient, formDataTutor?: Tutor) => {
       setErrros([]);
       setIsLoading(true);
-      const success = await actions.createPatient(formData, formDataTutor);
-      if (success) {
+      const idPatient = await actions.createPatient(formData, formDataTutor);
+      if (idPatient) {
         if (props.isGuestMode) {
-          history.replace("/registro-clave", formData);
+          history.replace("/registro-clave", { ...formData, id: idPatient });
         } else {
           history.replace("/pacientes");
         }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Switch, Route, BrowserRouter as Router } from "react-router-dom";
+import { Switch, Route } from "react-router-dom";
 
 import AuthOptions from "../Guest/components/AuthOptions";
 import LoginForm from "../Guest/components/LoginForm";

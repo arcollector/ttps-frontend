@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 
 import { UsersService } from "./services";
-import { User, emptyUser } from "./interfaces";
+import { User } from "./interfaces";
 
 export const registerFirebaseAuth = async (email: string, pass: string) => {
   try {

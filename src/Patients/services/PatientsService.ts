@@ -16,13 +16,12 @@ export class PatientsService {
     return items.length !== 0;
   }
 
-  public static async create(formData: Patient): Promise<boolean> {
+  public static async create(formData: Patient): Promise<string> {
     const existsDni = await PatientsService.existsDni(formData.dni);
     if (!existsDni) {
-      await Crud.create("patients", formData);
-      return true;
+      return await Crud.create("patients", formData);
     }
-    return false;
+    throw new Error("DNI_NOT_AVAILABLE");
   }
 
   public static async update(
