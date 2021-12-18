@@ -94,6 +94,68 @@ export function MedicalExams(props) {
     setViewFilter({ estado: e.target.value });
   };
 
+  const allStates = React.useMemo(
+    () => [
+      { value: "todos", label: "Todos" },
+      { value: "enviarPresupuesto", label: "Estudios sin presupuesto enviado" },
+      {
+        value: "esperandoComprobante",
+        label: "Estudios sin recibir comprobante de pago",
+      },
+      {
+        value: "enviarConsentimiento",
+        label: "Estudios sin enviar consentimiento",
+      },
+      {
+        value: "esperandoConsentimiento",
+        label: "Estudios sin recibir consentimiento informado",
+      },
+      { value: "esperandoTurno", label: "Estudios sin turno" },
+      {
+        value: "esperandoTomaDeMuestra",
+        label: "Estudios sin toma de muestra",
+      },
+      {
+        value: "esperandoRetiroDeMuestra",
+        label: "Estudios con muestra sin retirar",
+      },
+      { value: "esperandoLote", label: "Estudios esperando lote" },
+      {
+        value: "esperandoInterpretacion",
+        label: "Estudios esperando interpretacion de resultados",
+      },
+      {
+        value: "resultadoEntregado",
+        label: "Estudios con interpretacion de resultados",
+      },
+      {
+        value: "finalizado",
+        label: "Estudios finalizados",
+      },
+    ],
+    []
+  );
+  const statesForPatients = React.useMemo(
+    () => [
+      "todos",
+      "esperandoComprobante",
+      "esperandoConsentimiento",
+      "esperandoTurno",
+      "finalizado",
+    ],
+    []
+  );
+  const visibleStates = React.useMemo(
+    () =>
+      allStates.filter(({ value }) => {
+        if (userRole === "patient") {
+          return statesForPatients.includes(value);
+        }
+        return true;
+      }),
+    [allStates, statesForPatients, userRole]
+  );
+
   return (
     <div className="estudios-content">
       <select
@@ -101,33 +163,11 @@ export function MedicalExams(props) {
         onChange={viewOnChange}
         className="ui fluid dropdown"
       >
-        <option value="todos">Todos</option>
-        <option value="enviarPresupuesto">
-          Estudios sin presupuesto enviado
-        </option>
-        <option value="esperandoComprobante">
-          Estudios sin recibir comprobante de pago
-        </option>
-        <option value="enviarConsentimiento">
-          Estudios sin enviar consentimiento
-        </option>
-        <option value="esperandoConsentimiento">
-          Estudios sin recibir consentimiento informado
-        </option>
-        <option value="esperandoTurno">Estudios sin turno</option>
-        <option value="esperandoTomaDeMuestra">
-          Estudios sin toma de muestra
-        </option>
-        <option value="esperandoRetiroDeMuestra">
-          Estudios con muestra sin retirar
-        </option>
-        <option value="esperandoLote">Estudios esperando lote</option>
-        <option value="esperandoInterpretacion">
-          Estudios esperando interpretacion de resultados
-        </option>
-        <option value="resultadoEntregado">
-          Estudios con interpretacion de resultados
-        </option>
+        {visibleStates.map(({ value, label }) => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ))}
       </select>
 
       {filterStates &&
