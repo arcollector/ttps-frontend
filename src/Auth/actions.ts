@@ -73,3 +73,16 @@ export const getUserByUsername = async (username: string) => {
     return null;
   }
 };
+
+export const getUserByEmail = async (email: string) => {
+  try {
+    const users = await UsersService.getAllAsItemsByEmail(email);
+    if (users.length === 0) {
+      return null;
+    }
+    return users[0];
+  } catch (error) {
+    toast.error(`no se pudo obtener los datos del usuario ${email}`);
+    return null;
+  }
+};

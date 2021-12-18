@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Switch, Route } from "react-router-dom";
+import { Dimmer, Loader } from "semantic-ui-react";
 
 import AuthOptions from "../Guest/components/AuthOptions";
 import LoginForm from "../Guest/components/LoginForm";
@@ -12,7 +13,11 @@ import LogoAuth from "../Guest/assets/logo.png";
 
 import "../Guest/styles/Guest.scss";
 
-export function Guest() {
+type Props = {
+  isLoading: boolean;
+};
+
+export function Guest(props: Props) {
   const [selectedForm, setSelectedForm] = useState<
     "auth" | "login" | "register"
   >("auth");
@@ -34,14 +39,22 @@ export function Guest() {
               <img src={LogoAuth} alt="logo" />
             </div>
 
-            {selectedForm === "login" && (
-              <LoginForm setSelectedForm={handlerForm} />
-            )}
-            {selectedForm === "register" && (
-              <RegisterForm setSelectedForm={handlerForm} />
-            )}
-            {selectedForm === "auth" && (
-              <AuthOptions setSelectedForm={handlerForm} />
+            {props.isLoading ? (
+              <Dimmer active>
+                <Loader />
+              </Dimmer>
+            ) : (
+              <>
+                {selectedForm === "login" && (
+                  <LoginForm setSelectedForm={handlerForm} />
+                )}
+                {selectedForm === "register" && (
+                  <RegisterForm setSelectedForm={handlerForm} />
+                )}
+                {selectedForm === "auth" && (
+                  <AuthOptions setSelectedForm={handlerForm} />
+                )}
+              </>
             )}
           </div>
         </div>

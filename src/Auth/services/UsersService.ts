@@ -23,6 +23,10 @@ export class UsersService {
     return await Crud.getAllBy<User>("users", ["username", username]);
   }
 
+  public static async getAllAsItemsByEmail(email: string): Promise<User[]> {
+    return await Crud.getAllBy<User>("users", ["email", email]);
+  }
+
   public static async registerFirebaseAuth(
     email: string,
     pass: string

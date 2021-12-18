@@ -5,7 +5,7 @@ import firebase from "firebase/compat/app";
 import { ToastContainer } from "react-toastify";
 import { Navigation } from "./Navigation";
 import { AuthContext } from "./contexts";
-import { User } from "./Auth";
+import { User, actions as authActions } from "./Auth";
 
 function InnerApp() {
   const history = useHistory();
@@ -49,6 +49,17 @@ function InnerApp() {
     }
   }, [userAuthenticated, userFromFirestore, history]);
 
+  React.useEffect(() => {
+    (async () => {
+      if (userAuthenticated && userAuthenticated.email && !userFromFirestore) {
+        const user = await authActions.getUserByEmail(userAuthenticated.email);
+        if (user) {
+          setUserFromFirestore(user);
+        }
+      }
+    })();
+  }, [userAuthenticated, userFromFirestore]);
+
   return (
     <AuthContext.Provider value={authContextReducer}>
       {userAuthenticated && userFromFirestore && isLogged ? (
@@ -57,7 +68,7 @@ function InnerApp() {
           userFromFirestore={userFromFirestore}
         />
       ) : (
-        <Navigation.Guest />
+        <Navigation.Guest isLoading={userAuthenticated ? true : false} />
       )}
     </AuthContext.Provider>
   );

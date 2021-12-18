@@ -9,3 +9,5 @@ export const Auth = {
 };
 
 export * from "./interfaces";
+
+export * as actions from "./actions";
