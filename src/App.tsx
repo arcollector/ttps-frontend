@@ -14,19 +14,20 @@ function InnerApp() {
   const [userFromFirestore, setUserFromFirestore] = React.useState<User | null>(
     null
   );
+  const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((currentUser) => {
+    return firebase.auth().onAuthStateChanged((currentUser) => {
       if (currentUser && currentUser.emailVerified) {
         setUserAuthenticated(currentUser);
       } else if (!currentUser) {
+        setIsLoading(false);
         setUserAuthenticated(null);
         setUserFromFirestore(null);
         setIsLogged(false);
         history.replace("/");
       }
     });
-    return unsubscribe;
   }, [history]);
 
   const authContextReducer = React.useMemo(
@@ -45,6 +46,7 @@ function InnerApp() {
   React.useEffect(() => {
     if (userAuthenticated && userFromFirestore) {
       setIsLogged(true);
+      setIsLoading(false);
       history.replace("/");
     }
   }, [userAuthenticated, userFromFirestore, history]);
@@ -68,7 +70,7 @@ function InnerApp() {
           userFromFirestore={userFromFirestore}
         />
       ) : (
-        <Navigation.Guest isLoading={userAuthenticated ? true : false} />
+        <Navigation.Guest isLoading={isLoading} />
       )}
     </AuthContext.Provider>
   );
