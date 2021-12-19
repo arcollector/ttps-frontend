@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { BrowserRouter as Router, useHistory } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  useHistory,
+  useLocation,
+} from "react-router-dom";
 import "firebase/compat/auth";
 import firebase from "firebase/compat/app";
 import { ToastContainer } from "react-toastify";
@@ -9,6 +13,7 @@ import { User, actions as authActions } from "./Auth";
 
 function InnerApp() {
   const history = useHistory();
+  const location = useLocation();
   const [userAuthenticated, setUserAuthenticated] =
     useState<firebase.User | null>(null);
   const [userFromFirestore, setUserFromFirestore] = React.useState<User | null>(
@@ -47,9 +52,15 @@ function InnerApp() {
     if (userAuthenticated && userFromFirestore) {
       setIsLogged(true);
       setIsLoading(false);
-      history.replace("/");
+      if (
+        ["/ingresar", "/registro", "/registro-clave"].includes(
+          location.pathname
+        )
+      ) {
+        history.replace("/");
+      }
     }
-  }, [userAuthenticated, userFromFirestore, history]);
+  }, [userAuthenticated, userFromFirestore, history, location.pathname]);
 
   React.useEffect(() => {
     (async () => {
@@ -62,6 +73,10 @@ function InnerApp() {
     })();
   }, [userAuthenticated, userFromFirestore]);
 
+  if (isLoading) {
+    return <Navigation.Splash isLoading />;
+  }
+
   return (
     <AuthContext.Provider value={authContextReducer}>
       {userAuthenticated && userFromFirestore && isLogged ? (
@@ -70,7 +85,7 @@ function InnerApp() {
           userFromFirestore={userFromFirestore}
         />
       ) : (
-        <Navigation.Guest isLoading={isLoading} />
+        <Navigation.Guest />
       )}
     </AuthContext.Provider>
   );

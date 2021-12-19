@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Icon, Button } from "semantic-ui-react";
+import { Icon, Button, Label } from "semantic-ui-react";
 import "../styles/MedicalExams.scss";
 import EnviarPresupuesto from "./EnviarPresupuesto";
 import SubirComprobante from "./SubirComprobante";
@@ -257,22 +257,26 @@ export function MedicalExams(props) {
                     viewFilter.estado === "todos") && (
                     <div className="contenedor-tarjeta">
                       <div className="ui card">
-                        {patients && (
-                          <div className="header">
-                            {`${patients[exam.idPatient].nombre} ${
+                        <Label horizontal style={{ width: "100%", margin: 0 }}>
+                          <Icon name="file outline" />
+                          <small>{exam.id}</small>
+                        </Label>
+
+                        <div className="header">
+                          {patients &&
+                            `${patients[exam.idPatient].nombre} ${
                               patients[exam.idPatient].apellido
                             }`}
-                            <Button
-                              as={Link}
-                              primary
-                              size="mini"
-                              to={`/exam/${exam.id}`}
-                            >
-                              <Icon name="eye" />
-                              Ver Detalles
-                            </Button>
-                          </div>
-                        )}
+                          <Button
+                            as={Link}
+                            primary
+                            size="mini"
+                            to={`/exam/${exam.id}`}
+                          >
+                            <Icon name="eye" />
+                            Ver Detalles
+                          </Button>
+                        </div>
 
                         <div className="content">
                           <h4 className="ui sub header">Estudios</h4>
