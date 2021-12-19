@@ -123,7 +123,7 @@ export function SideBar(props: Props) {
 
               <Menu.Item
                 as={Link}
-                to="/crearestudio"
+                to="/"
                 onClick={() => handlerModal("estudio")}
               >
                 <Icon name="plus square outline" />

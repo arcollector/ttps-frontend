@@ -104,6 +104,8 @@ export default function Exam() {
     })();
   }, [exam, historial]);
 
+  console.log(exam);
+
   return (
     <div className="content-exam">
       {exam && historial["enviarPresupuesto"] !== "" && (
@@ -131,6 +133,10 @@ export default function Exam() {
           </p>
 
           <h2>Datos del estudio:</h2>
+          <p>
+            <strong>Patologia (diagnostico presuntivo): </strong>
+            <i> {exam.patology} </i>
+          </p>
           <p>
             <strong>Medico derivante: </strong>
             <i>

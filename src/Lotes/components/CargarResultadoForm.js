@@ -72,7 +72,7 @@ export default function CargarResultadoForm(props) {
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((id) => (
             <Form.Field
               key={id}
-              label={`Lote ${id} fallido?`}
+              label={`Lote ${id} (${lote[`idMedicExam${id}`]}) fallido?`}
               control="input"
               type="checkbox"
               name={`lote-${id}`}

@@ -56,7 +56,8 @@ export function Lotes(props) {
                           as={Link}
                           to={`/exam/${lote[`idMedicExam${id}`]}`}
                         >
-                          Estudio {id} <small>{lote[`idMedicExam${id}`]}</small>
+                          Estudio {id}{" "}
+                          <small>({lote[`idMedicExam${id}`]})</small>
                         </Button>
                       ))}
                     </Button.Group>

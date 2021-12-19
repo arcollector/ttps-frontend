@@ -18,7 +18,7 @@ type Props = {
   disabled?: boolean;
   validator?: yup.AnySchema;
   required?: boolean;
-  nullyfiedText: string;
+  nullyfiedText?: string;
 };
 
 export function FormDropdown(props: Props) {
@@ -73,11 +73,13 @@ export function FormDropdown(props: Props) {
         search
         selection
       />
-      <Checkbox
-        label={props.nullyfiedText}
-        onClick={onNullifyValue}
-        checked={isNullified}
-      />
+      {props.nullyfiedText && (
+        <Checkbox
+          label={props.nullyfiedText}
+          onClick={onNullifyValue}
+          checked={isNullified}
+        />
+      )}
       {errorsMessage.map((errorMessage, i) => (
         <small key={i}>
           <strong>{errorMessage}</strong>
