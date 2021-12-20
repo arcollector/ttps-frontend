@@ -104,8 +104,6 @@ export default function Exam() {
     })();
   }, [exam, historial]);
 
-  console.log(exam);
-
   return (
     <div className="content-exam">
       {exam && historial["enviarPresupuesto"] !== "" && (

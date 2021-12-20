@@ -141,6 +141,7 @@ export function MedicalExams(props) {
       "esperandoComprobante",
       "esperandoConsentimiento",
       "esperandoTurno",
+      "esperandoTomaDeMuestra",
       "finalizado",
     ],
     []
@@ -154,6 +155,24 @@ export function MedicalExams(props) {
         return true;
       }),
     [allStates, statesForPatients, userRole]
+  );
+
+  const orderedStatesRaw = [
+    "enviarPresupuesto",
+    "esperandoComprobante",
+    "enviarConsentimiento",
+    "esperandoConsentimiento",
+    "esperandoTurno",
+    "esperandoTomaDeMuestra",
+    "esperandoRetiroDeMuestra",
+    "esperandoLote",
+    "esperandoInterpretacion",
+    "resultadoEntregado",
+    "finalizado",
+  ];
+
+  const orderedStates = orderedStatesRaw.filter((state) => 
+    visibleStates.find(({value}) => value === state)
   );
 
   return (
@@ -170,8 +189,7 @@ export function MedicalExams(props) {
         ))}
       </select>
 
-      {filterStates &&
-        Object.keys(filterStates).map((exams, i) => (
+      {filterStates && orderedStates.map((exams, i) => (
           <Fragment key={i}>
             {exams === "enviarPresupuesto" &&
               filterStates[exams].length > 0 &&

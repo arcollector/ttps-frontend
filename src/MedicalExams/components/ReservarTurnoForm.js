@@ -7,6 +7,7 @@ import moment from "moment";
 import "../../Appointments/styles/AppointmentNewForm.scss";
 import "react-widgets/scss/styles.scss";
 import * as actions from "../actions";
+import twix from 'twix';
 moment.locale("es");
 
 export default function ReservarTurnoForm(props) {
