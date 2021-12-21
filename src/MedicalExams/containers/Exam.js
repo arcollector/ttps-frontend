@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../styles/Exam.scss";
 import * as actions from "../actions";
+import { AuthContext } from "../../contexts";
 
 export default function Exam() {
   const { id: examId } = useParams();
@@ -15,6 +16,9 @@ export default function Exam() {
   const [urlConsentimiento, setUrlConsentimiento] = useState(null);
   const [urlComprobante, setUrlComprobante] = useState(null);
   const [lote, setLote] = useState(null);
+  const userFromFirestore =
+    React.useContext(AuthContext).getUserFromFirestore();
+  const userRole = userFromFirestore?.role;
 
   useEffect(() => {
     (async () => {
@@ -251,7 +255,7 @@ export default function Exam() {
               </p>
             </>
           )}
-          {historial["esperandoLote"] !== undefined && (
+          {userRole !== "patient" && historial["esperandoLote"] !== undefined && (
             <>
               <h5>Extraccion de la muestra</h5>
               <p>
@@ -268,23 +272,25 @@ export default function Exam() {
               </p>
             </>
           )}
-          {historial["esperandoRetiroDeMuestra"] !== undefined && (
-            <>
-              <h5>Conformacion del lote de muestras</h5>
-              <p>
-                <strong>Realizado por:</strong>{" "}
-                {historial["esperandoRetiroDeMuestra"]?.employee}{" "}
-                <strong> fecha: </strong>
-                {historial["esperandoRetiroDeMuestra"]?.day}-
-                {historial["esperandoRetiroDeMuestra"]?.month}-
-                {historial["esperandoRetiroDeMuestra"]?.year}
-              </p>
-              <p>
-                <a href={`/lote/${lote?.id}`}>Ver lote</a>
-              </p>
-            </>
-          )}
-          {historial["esperandoInterpretacion"] !== undefined &&
+          {userRole !== "patient" &&
+            historial["esperandoRetiroDeMuestra"] !== undefined && (
+              <>
+                <h5>Conformacion del lote de muestras</h5>
+                <p>
+                  <strong>Realizado por:</strong>{" "}
+                  {historial["esperandoRetiroDeMuestra"]?.employee}{" "}
+                  <strong> fecha: </strong>
+                  {historial["esperandoRetiroDeMuestra"]?.day}-
+                  {historial["esperandoRetiroDeMuestra"]?.month}-
+                  {historial["esperandoRetiroDeMuestra"]?.year}
+                </p>
+                <p>
+                  <a href={`/lote/${lote?.id}`}>Ver lote</a>
+                </p>
+              </>
+            )}
+          {userRole !== "patient" &&
+            historial["esperandoInterpretacion"] !== undefined &&
             lote?.urlResultado !== "" && (
               <>
                 <h5>Llegada de resultados de la muestra</h5>
@@ -298,6 +304,27 @@ export default function Exam() {
                 </p>
               </>
             )}
+          {userRole === "patient" && (
+            <>
+              <h5>Esperando resultado</h5>
+              <h6>Extraccion de la muestra</h6>
+              <p>
+                <strong>Realizado por:</strong>{" "}
+                {historial["esperandoLote"]?.employee} <strong> fecha: </strong>
+                {historial["esperandoLote"]?.day}-
+                {historial["esperandoLote"]?.month}-
+                {historial["esperandoLote"]?.year}
+              </p>
+              <p>
+                <strong>Cantidad de ml: </strong> <i>{sample?.cantMl}</i>{" "}
+              </p>
+            </>
+          )}
+          {/*
+            TODO
+              mostrar al paciente los datos que hacen a esperando resultado
+              mostrar estado finalizado que mostrara el texto del estado interpretacion del resultado
+          */}
         </>
       )}
     </div>
