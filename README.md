@@ -1,4 +1,4 @@
-# Estructura de la aplicacion
+# Estructura de la aplicación
 
 ## Carpeta Navigation
 
