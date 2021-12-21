@@ -139,6 +139,11 @@ export function SideBar(props: Props) {
                 <Icon name="chart bar" />
                 Reportes
               </Menu.Item>
+
+              <Menu.Item as={Link} to="/retrasados">
+                <Icon name="window close" />
+                Estudios retrasados
+              </Menu.Item>
             </>
           )}
         </div>

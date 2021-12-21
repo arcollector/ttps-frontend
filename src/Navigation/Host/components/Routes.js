@@ -11,6 +11,7 @@ import Lote from "../../../Lotes/containers/Lote";
 import Payment from "../../../Payments/containers/Payment";
 import { NotFound } from "../../../NotFound";
 import { Dashboard } from "../../../Dashboard";
+import Retrasados from "../../../Retrasados/containers/Retrasados";
 
 export function Routes(props) {
   const { user } = props;
@@ -66,6 +67,10 @@ export function Routes(props) {
 
       <Route path="/reportes" exact>
         <Charts />
+      </Route>
+
+      <Route path="/retrasados" exact>
+        <Retrasados />
       </Route>
 
       <Route path="*">
