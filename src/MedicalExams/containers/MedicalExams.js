@@ -20,7 +20,20 @@ export function MedicalExams(props) {
 
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
-  const [filterStates, setFilterStates] = useState(null);
+  const [filterStates, setFilterStates] = useState({
+        "enviarPresupuesto": [],
+        "esperandoComprobante": [],
+        "enviarConsentimiento": [],
+        "esperandoConsentimiento": [],
+        "esperandoTurno": [],
+        "esperandoTomaDeMuestra": [],
+        "esperandoRetiroDeMuestra": [],
+        "esperandoLote": [],
+        "enLote": [],
+        "esperandoInterpretacion": [],
+        "resultadoEntregado": [],
+        "finalizado": [],
+      });
   const [reloading, setReloading] = useState(false);
   const [viewFilter, setViewFilter] = useState({ estado: "todos" });
   const [insurers, setInsurers] = React.useState([]);
@@ -32,13 +45,20 @@ export function MedicalExams(props) {
   useEffect(() => {
     (async () => {
       const statesAsDict = await actions.getStatesAsDict();
-      const filters = Object.values(statesAsDict).reduce(
-        (acc, state) => ({
-          ...acc,
-          [state.name]: [],
-        }),
-        {}
-      );
+      const filters = {
+        "enviarPresupuesto": [],
+        "esperandoComprobante": [],
+        "enviarConsentimiento": [],
+        "esperandoConsentimiento": [],
+        "esperandoTurno": [],
+        "esperandoTomaDeMuestra": [],
+        "esperandoRetiroDeMuestra": [],
+        "esperandoLote": [],
+        "enLote": [],
+        "esperandoInterpretacion": [],
+        "resultadoEntregado": [],
+        "finalizado": [],
+      }
       const exams = await actions.getExams(idPatient);
       exams.forEach((exam) => {
         if (exam.idState in statesAsDict) {
@@ -157,23 +177,9 @@ export function MedicalExams(props) {
     [allStates, statesForPatients, userRole]
   );
 
-  const orderedStatesRaw = [
-    "enviarPresupuesto",
-    "esperandoComprobante",
-    "enviarConsentimiento",
-    "esperandoConsentimiento",
-    "esperandoTurno",
-    "esperandoTomaDeMuestra",
-    "esperandoRetiroDeMuestra",
-    "esperandoLote",
-    "esperandoInterpretacion",
-    "resultadoEntregado",
-    "finalizado",
-  ];
-
-  const orderedStates = orderedStatesRaw.filter((state) => 
-    visibleStates.find(({value}) => value === state)
-  );
+  const visibleStatesMenosTodos = React.useMemo(() => {
+    return visibleStates.filter(({ value }) => value !== 'todos');
+  }, [visibleStates]);
 
   return (
     <div className="estudios-content">
@@ -181,6 +187,7 @@ export function MedicalExams(props) {
         name="estado"
         onChange={viewOnChange}
         className="ui fluid dropdown"
+        value={viewFilter.estado}
       >
         {visibleStates.map(({ value, label }) => (
           <option key={value} value={value}>
@@ -189,7 +196,7 @@ export function MedicalExams(props) {
         ))}
       </select>
 
-      {filterStates && orderedStates.map((exams, i) => (
+      {visibleStatesMenosTodos.map(({ value : exams }, i) => (
           <Fragment key={i}>
             {exams === "enviarPresupuesto" &&
               filterStates[exams].length > 0 &&
