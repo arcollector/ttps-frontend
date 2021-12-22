@@ -12,6 +12,7 @@ type Props = {
   disabled?: boolean;
   validator?: yup.AnySchema;
   required?: boolean;
+  style?: any;
 };
 
 export function FormInput(props: Props) {
@@ -36,12 +37,14 @@ export function FormInput(props: Props) {
     [onChange, validator, props.name]
   );
 
+  const style = props.style || {};
+
   return (
     <Form.Field
       data-testid={props.name}
       error={isError}
       required={props.required}
-      style={{ minHeight: 80 }}
+      style={{ minHeight: 80, ...style }}
     >
       <label htmlFor={props.name}>{props.label}</label>
       <Input

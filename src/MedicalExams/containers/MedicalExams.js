@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Icon, Button, Label, Divider } from "semantic-ui-react";
+import { Icon, Button, Label, Divider, Form, Segment } from "semantic-ui-react";
 import "../styles/MedicalExams.scss";
 import EnviarPresupuesto from "./EnviarPresupuesto";
 import SubirComprobante from "./SubirComprobante";
@@ -12,6 +12,7 @@ import RetirarMuestra from "./RetirarMuestra";
 import { actions as insurersActions } from "../../Insurers";
 import CargarInterpretacion from "./CargarInterpretacion";
 import EnviarResultado from "./EnviarResultado";
+import { FormInput } from "../../shared/components/FormInput";
 import * as actions from "../actions";
 import { AuthContext } from "../../contexts";
 
@@ -106,6 +107,72 @@ export function MedicalExams(props) {
       setFilterStates((v) => ({ ...v, esperandoResultado: examsCompressed }));
     }
   }, [exams, states, userRole]);
+
+  const [searchPatientDni, setSearchPatientDni] = useState("");
+  const onChangeSearchPatientDni = (_, text) => {
+    setSearchPatientDni(text);
+  };
+
+  const onSearchPatientByDni = React.useCallback(() => {
+    if (searchPatientDni) {
+      const patientsFiltered = Object.values(patients)
+        .filter((patient) => patient.dni.includes(searchPatientDni))
+        .map(({ id }) => id);
+      const examsFiltered = [];
+      exams.forEach((exam) => {
+        if (patientsFiltered.includes(exam.idPatient)) {
+          examsFiltered.push(exam);
+        }
+      });
+      const filters = {
+        enviarPresupuesto: [],
+        esperandoComprobante: [],
+        enviarConsentimiento: [],
+        esperandoConsentimiento: [],
+        esperandoTurno: [],
+        esperandoTomaDeMuestra: [],
+        // este estado no existe
+        esperandoResultado: [],
+        esperandoRetiroDeMuestra: [],
+        esperandoLote: [],
+        enLote: [],
+        esperandoInterpretacion: [],
+        resultadoEntregado: [],
+        finalizado: [],
+      };
+      examsFiltered.forEach((exam) => {
+        if (exam.idState in states) {
+          filters[states[exam.idState].name].push(exam);
+        }
+      });
+      setFilterStates({ ...filters });
+    }
+  }, [exams, patients, searchPatientDni]);
+
+  const onResetSearchPatient = () => {
+    const filters = {
+      enviarPresupuesto: [],
+      esperandoComprobante: [],
+      enviarConsentimiento: [],
+      esperandoConsentimiento: [],
+      esperandoTurno: [],
+      esperandoTomaDeMuestra: [],
+      // este estado no existe
+      esperandoResultado: [],
+      esperandoRetiroDeMuestra: [],
+      esperandoLote: [],
+      enLote: [],
+      esperandoInterpretacion: [],
+      resultadoEntregado: [],
+      finalizado: [],
+    };
+    exams.forEach((exam) => {
+      if (exam.idState in states) {
+        filters[states[exam.idState].name].push(exam);
+      }
+    });
+    setFilterStates({ ...filters });
+  };
 
   useEffect(() => {
     (async () => {
@@ -230,6 +297,26 @@ export function MedicalExams(props) {
 
   return (
     <div className="estudios-content">
+      {userRole !== "patient" && (
+        <Segment>
+          <Form>
+            <FormInput
+              label=""
+              name="dni"
+              placeholder="Buscar por dni..."
+              type="text"
+              onChange={onChangeSearchPatientDni}
+              value={searchPatientDni}
+              style={{ minHeight: 0 }}
+            />
+            <Button onClick={onSearchPatientByDni}>Buscar</Button>
+            <Button secondary onClick={onResetSearchPatient}>
+              Reset
+            </Button>
+          </Form>
+        </Segment>
+      )}
+
       <select
         name="estado"
         onChange={viewOnChange}
