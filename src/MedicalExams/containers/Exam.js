@@ -269,6 +269,8 @@ export default function Exam() {
                 <strong>Cantidad de ml: </strong> <i>{sample?.cantMl}</i>{" "}
                 <strong> Freezer: </strong>
                 <i>{sample?.freezer}</i>
+                <strong> Retirado por: </strong>
+                <i>{sample?.retiradoPor}</i>
               </p>
             </>
           )}
@@ -304,10 +306,10 @@ export default function Exam() {
                 </p>
               </>
             )}
-          {userRole === "patient" && (
+          {userRole === "patient" && historial["esperandoLote"] !== undefined &&(
             <>
-              <h5>Esperando resultado</h5>
-              <h6>Extraccion de la muestra</h6>
+              
+              <h5>Esperando Resultados</h5>
               <p>
                 <strong>Realizado por:</strong>{" "}
                 {historial["esperandoLote"]?.employee} <strong> fecha: </strong>
@@ -315,11 +317,22 @@ export default function Exam() {
                 {historial["esperandoLote"]?.month}-
                 {historial["esperandoLote"]?.year}
               </p>
-              <p>
-                <strong>Cantidad de ml: </strong> <i>{sample?.cantMl}</i>{" "}
-              </p>
+              
+              
             </>
           )}
+          {userRole === "patient" &&
+            historial["resultadoEntregado"] !== undefined && (
+              <>
+                <h5>Resultado completo</h5>
+                <p>resultado del estudio:</p>
+                <p>
+                  
+                  {exam?.descripcion}
+                </p>
+                
+              </>
+            )}
           {/*
             TODO
               mostrar al paciente los datos que hacen a esperando resultado
