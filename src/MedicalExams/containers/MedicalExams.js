@@ -16,6 +16,22 @@ import { FormInput } from "../../shared/components/FormInput";
 import * as actions from "../actions";
 import { AuthContext } from "../../contexts";
 
+const getFiltersBase = () => ({
+  enviarPresupuesto: [],
+  esperandoComprobante: [],
+  enviarConsentimiento: [],
+  esperandoConsentimiento: [],
+  esperandoTurno: [],
+  esperandoTomaDeMuestra: [],
+  esperandoResultado: [],
+  esperandoRetiroDeMuestra: [],
+  esperandoLote: [],
+  enLote: [],
+  esperandoInterpretacion: [],
+  resultadoEntregado: [],
+  finalizado: [],
+});
+
 export function MedicalExams(props) {
   const { user } = props;
 
@@ -23,21 +39,7 @@ export function MedicalExams(props) {
   const [patients, setPatients] = useState(null);
   const [exams, setExams] = useState([]);
   const [states, setStates] = useState({});
-  const [filterStates, setFilterStates] = useState({
-    enviarPresupuesto: [],
-    esperandoComprobante: [],
-    enviarConsentimiento: [],
-    esperandoConsentimiento: [],
-    esperandoTurno: [],
-    esperandoTomaDeMuestra: [],
-    esperandoResultado: [],
-    esperandoRetiroDeMuestra: [],
-    esperandoLote: [],
-    enLote: [],
-    esperandoInterpretacion: [],
-    resultadoEntregado: [],
-    finalizado: [],
-  });
+  const [filterStates, setFilterStates] = useState(getFiltersBase());
   const [reloading, setReloading] = useState(false);
   const [viewFilter, setViewFilter] = useState({ estado: "todos" });
   const [insurers, setInsurers] = React.useState([]);
@@ -49,22 +51,7 @@ export function MedicalExams(props) {
   useEffect(() => {
     (async () => {
       const statesAsDict = await actions.getStatesAsDict();
-      const filters = {
-        enviarPresupuesto: [],
-        esperandoComprobante: [],
-        enviarConsentimiento: [],
-        esperandoConsentimiento: [],
-        esperandoTurno: [],
-        esperandoTomaDeMuestra: [],
-        // este estado no existe
-        esperandoResultado: [],
-        esperandoRetiroDeMuestra: [],
-        esperandoLote: [],
-        enLote: [],
-        esperandoInterpretacion: [],
-        resultadoEntregado: [],
-        finalizado: [],
-      };
+      const filters = getFiltersBase();
       const exams = await actions.getExams(idPatient);
       exams.forEach((exam) => {
         if (exam.idState in statesAsDict) {
@@ -106,7 +93,7 @@ export function MedicalExams(props) {
       });
       setFilterStates((v) => ({ ...v, esperandoResultado: examsCompressed }));
     }
-  }, [exams, states, userRole]);
+  }, [exams, userFromFirestore.idPatient, states, userRole]);
 
   const [searchPatientDni, setSearchPatientDni] = useState("");
   const onChangeSearchPatientDni = (_, text) => {
@@ -124,22 +111,7 @@ export function MedicalExams(props) {
           examsFiltered.push(exam);
         }
       });
-      const filters = {
-        enviarPresupuesto: [],
-        esperandoComprobante: [],
-        enviarConsentimiento: [],
-        esperandoConsentimiento: [],
-        esperandoTurno: [],
-        esperandoTomaDeMuestra: [],
-        // este estado no existe
-        esperandoResultado: [],
-        esperandoRetiroDeMuestra: [],
-        esperandoLote: [],
-        enLote: [],
-        esperandoInterpretacion: [],
-        resultadoEntregado: [],
-        finalizado: [],
-      };
+      const filters = getFiltersBase();
       examsFiltered.forEach((exam) => {
         if (exam.idState in states) {
           filters[states[exam.idState].name].push(exam);
@@ -147,32 +119,18 @@ export function MedicalExams(props) {
       });
       setFilterStates({ ...filters });
     }
-  }, [exams, patients, searchPatientDni]);
+  }, [exams, patients, states, searchPatientDni]);
 
-  const onResetSearchPatient = () => {
-    const filters = {
-      enviarPresupuesto: [],
-      esperandoComprobante: [],
-      enviarConsentimiento: [],
-      esperandoConsentimiento: [],
-      esperandoTurno: [],
-      esperandoTomaDeMuestra: [],
-      // este estado no existe
-      esperandoResultado: [],
-      esperandoRetiroDeMuestra: [],
-      esperandoLote: [],
-      enLote: [],
-      esperandoInterpretacion: [],
-      resultadoEntregado: [],
-      finalizado: [],
-    };
+  const onResetSearchPatient = React.useCallback(() => {
+    const filters = getFiltersBase();
     exams.forEach((exam) => {
       if (exam.idState in states) {
         filters[states[exam.idState].name].push(exam);
       }
     });
+    setSearchPatientDni("");
     setFilterStates({ ...filters });
-  };
+  }, [exams, states]);
 
   useEffect(() => {
     (async () => {
@@ -423,8 +381,8 @@ export function MedicalExams(props) {
 
           <div className="section-state">
             {filterStates[exams].length === 0 && <div></div>}
-            {filterStates[exams].map((exam, i) => (
-              <Fragment key={i}>
+            {filterStates[exams].map((exam) => (
+              <Fragment key={exam.id}>
                 {(viewFilter.estado === exams ||
                   viewFilter.estado === "todos") && (
                   <div className="contenedor-tarjeta">
