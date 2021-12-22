@@ -1,54 +1,48 @@
-@import '../../shared/scss/index.scss';
+@import "../../shared/scss/index.scss";
 
-.estudios-content{
-  
-  float:left;
-  background-color: #E6E6EA;
+.estudios-content {
+  float: left;
+  background-color: #e6e6ea;
   width: 100%;
-   overflow: hidden;
-   padding: 30px;
+  overflow: hidden;
+  padding: 30px;
 
-   h3{
-     color:black;
-     text-align: center;
-     border-bottom: 1px solid black;
-   }
-  
-   .section-state{
-     display:block;
-     align-items: center;
-     overflow:auto;
-     
+  h3 {
+    color: black;
+    text-align: center;
+    border-bottom: 1px solid black;
+  }
 
-     
-     
-   }
-  .contenedor-tarjeta{
-    display:flex;
-    align-items:center;
-    width:30%;
-    height:400px;
-    
-    float:left;
-    
+  .section-state {
+    display: block;
+    align-items: center;
+    overflow: auto;
+  }
+  .contenedor-tarjeta {
+    display: flex;
+    align-items: center;
+    width: 40%;
+    height: 450px;
+
+    float: left;
+
     margin-top: 50px;
     margin-bottom: 30px;
 
-    .card{
-     
+    .card {
       align-items: center;
-      margin: 60px;
-      height:100%;
-      float:left;
-      
+      margin: 0px 60px;
+      height: 100%;
+      float: left;
 
-      .header{
+      .header {
         text-align: center;
-        margin:20px;
+        margin: 20px;
+      }
+
+      button.ui.button {
+        border-radius: 0;
       }
     }
-
-
   }
-    
 }

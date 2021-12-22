@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import { Patient } from "../interfaces";
 import { Tutor } from "../../Tutors";
 import * as actions from "../actions";
+import { actions as authActions } from "../../Auth";
 
 type Props = {
   isGuestMode: boolean;
@@ -31,7 +32,24 @@ export function Create(props: Props) {
         if (props.isGuestMode) {
           history.replace("/registro-clave", { ...formData, id: idPatient });
         } else {
-          history.replace("/pacientes");
+          let success = await authActions.registerFirebaseAuth(
+            formData.email,
+            "123456",
+            "Se ha enviado un correo a la cuenta de email especificada para este paciente, para que active su cuenta con password 123456"
+          );
+          if (success) {
+            success = await authActions.createUser({
+              id: "",
+              email: formData.email,
+              username: formData.dni,
+              pass: "123456",
+              role: "patient",
+              idPatient,
+            });
+            if (success) {
+              history.replace("/pacientes");
+            }
+          }
         }
       }
       setIsLoading(false);
