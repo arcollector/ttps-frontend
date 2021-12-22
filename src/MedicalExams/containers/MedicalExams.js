@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Icon, Button, Label } from "semantic-ui-react";
+import { Icon, Button, Label, Divider } from "semantic-ui-react";
 import "../styles/MedicalExams.scss";
 import EnviarPresupuesto from "./EnviarPresupuesto";
 import SubirComprobante from "./SubirComprobante";
@@ -199,81 +199,89 @@ export function MedicalExams(props) {
       {visibleStatesMenosTodos.map(({ value: exams }, i) => (
         <Fragment key={i}>
           {exams === "enviarPresupuesto" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "enviarPresupuesto" ||
               viewFilter.estado === "todos") && (
-              <h3>Estudios que requieren enviar presupuesto</h3>
+              <Divider horizontal>
+                Estudios que requieren enviar presupuesto
+              </Divider>
             )}
 
           {exams === "enviarConsentimiento" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "enviarConsentimiento" ||
               viewFilter.estado === "todos") && (
-              <h3>
+              <Divider horizontal>
                 Estudios que requieren enviar consentimiento para su firma
-              </h3>
+              </Divider>
             )}
 
           {exams === "esperandoComprobante" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "esperandoComprobante" ||
-              viewFilter.estado === "todos") && <h3>Estudios impagos</h3>}
+              viewFilter.estado === "todos") && (
+              <Divider horizontal>Estudios impagos</Divider>
+            )}
 
           {exams === "esperandoConsentimiento" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "esperandoConsentimiento" ||
               viewFilter.estado === "todos") && (
-              <h3>Estudios que esperan recibir consentimiento firmado </h3>
+              <Divider horizontal>
+                Estudios que esperan recibir consentimiento firmado{" "}
+              </Divider>
             )}
 
           {exams === "esperandoTurno" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "esperandoTurno" ||
-              viewFilter.estado === "todos") && <h3>Estudios sin turno </h3>}
+              viewFilter.estado === "todos") && (
+              <Divider horizontal>Estudios sin turno </Divider>
+            )}
 
           {exams === "esperandoTomaDeMuestra" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "esperandoTomaDeMuestra" ||
               viewFilter.estado === "todos") && (
-              <h3>Estudios a la espera de la toma de muestra </h3>
+              <Divider horizontal>
+                Estudios a la espera de la toma de muestra{" "}
+              </Divider>
             )}
 
           {exams === "esperandoRetiroDeMuestra" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "esperandoRetiroDeMuestra" ||
               viewFilter.estado === "todos") && (
-              <h3>Estudios a la espera del retiro de muestra </h3>
+              <Divider horizontal>
+                Estudios a la espera del retiro de muestra{" "}
+              </Divider>
             )}
 
           {exams === "esperandoLote" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "esperandoLote" ||
               viewFilter.estado === "todos") && (
-              <h3>Estudios a la espera de lote de muestras </h3>
+              <Divider horizontal>
+                Estudios a la espera de lote de muestras{" "}
+              </Divider>
             )}
 
           {exams === "esperandoInterpretacion" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "esperandoInterpretacion" ||
               viewFilter.estado === "todos") && (
-              <h3>Estudios a la espera de interpretacion de resultados </h3>
+              <Divider horizontal>
+                Estudios a la espera de interpretacion de resultados{" "}
+              </Divider>
             )}
 
           {exams === "resultadoEntregado" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "resultadoEntregado" ||
               viewFilter.estado === "todos") && (
-              <h3>
+              <Divider horizontal>
                 Estudios que requieren envio de resultado a medico derivante{" "}
-              </h3>
+              </Divider>
             )}
 
           {exams === "finalizado" &&
-            filterStates[exams].length > 0 &&
             (viewFilter.estado === "finalizado" ||
-              viewFilter.estado === "todos") && <h3>Estudios finalizados </h3>}
+              viewFilter.estado === "todos") && (
+              <Divider horizontal>Estudios finalizados </Divider>
+            )}
 
           <div className="section-state">
+            {filterStates[exams].length === 0 && <div></div>}
             {filterStates[exams].map((exam, i) => (
               <Fragment key={i}>
                 {(viewFilter.estado === exams ||
