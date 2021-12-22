@@ -7,6 +7,7 @@
     "chart.js": "^3.6.0",
     "firebase": "^9.1.2",
     "moment": "^2.29.1",
+    "moment-range": "^4.0.2",
     "nodemon": "^2.0.15",
     "react": "^17.0.2",
     "react-big-calendar": "^0.36.1",
