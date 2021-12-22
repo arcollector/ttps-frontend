@@ -20,6 +20,8 @@ export function MedicalExams(props) {
 
   const [doctors, setDoctors] = useState(null);
   const [patients, setPatients] = useState(null);
+  const [exams, setExams] = useState([]);
+  const [states, setStates] = useState({});
   const [filterStates, setFilterStates] = useState({
     enviarPresupuesto: [],
     esperandoComprobante: [],
@@ -27,6 +29,7 @@ export function MedicalExams(props) {
     esperandoConsentimiento: [],
     esperandoTurno: [],
     esperandoTomaDeMuestra: [],
+    esperandoResultado: [],
     esperandoRetiroDeMuestra: [],
     esperandoLote: [],
     enLote: [],
@@ -52,6 +55,8 @@ export function MedicalExams(props) {
         esperandoConsentimiento: [],
         esperandoTurno: [],
         esperandoTomaDeMuestra: [],
+        // este estado no existe
+        esperandoResultado: [],
         esperandoRetiroDeMuestra: [],
         esperandoLote: [],
         enLote: [],
@@ -66,8 +71,41 @@ export function MedicalExams(props) {
         }
       });
       setFilterStates({ ...filters });
+      setExams(exams);
+      setStates(statesAsDict);
     })();
-  }, [reloading, idPatient]);
+  }, [reloading, idPatient, userRole]);
+
+  useEffect(() => {
+    if (userRole === "patient") {
+      const compressedStates = [
+        "esperandoResultado",
+        "esperandoRetiroDeMuestra",
+        "esperandoLote",
+        "enLote",
+        "esperandoInterpretacion",
+        "resultadoEntregado",
+      ];
+      const examsCompressed = [];
+      exams.forEach((exam) => {
+        if (
+          exam.idState in states &&
+          exam.idPatient === userFromFirestore.idPatient
+        ) {
+          const stateName = states[exam.idState].name;
+          if (compressedStates.includes(stateName)) {
+            examsCompressed.push({
+              id: exam.id,
+              examSelected: exam.examSelected,
+              idMedic: exam.idMedic,
+              idPatient: exam.idPatient,
+            });
+          }
+        }
+      });
+      setFilterStates((v) => ({ ...v, esperandoResultado: examsCompressed }));
+    }
+  }, [exams, states, userRole]);
 
   useEffect(() => {
     (async () => {
@@ -135,6 +173,11 @@ export function MedicalExams(props) {
         value: "esperandoTomaDeMuestra",
         label: "Estudios sin toma de muestra",
       },
+      // este estado es de mentira
+      {
+        value: "esperandoResultado",
+        label: "Estudios esperando resultado",
+      },
       {
         value: "esperandoRetiroDeMuestra",
         label: "Estudios con muestra sin retirar",
@@ -158,10 +201,14 @@ export function MedicalExams(props) {
   const statesForPatients = React.useMemo(
     () => [
       "todos",
+      "enviarPresupuesto",
       "esperandoComprobante",
+      "enviarConsentimiento",
       "esperandoConsentimiento",
       "esperandoTurno",
       "esperandoTomaDeMuestra",
+      // este estado no existe
+      "esperandoResultado",
       "finalizado",
     ],
     []
@@ -248,6 +295,13 @@ export function MedicalExams(props) {
               <Divider horizontal>
                 Estudios a la espera del retiro de muestra{" "}
               </Divider>
+            )}
+
+          {userRole === "patient" &&
+            exams === "esperandoResultado" &&
+            (viewFilter.estado === "esperandoResultado" ||
+              viewFilter.estado === "todos") && (
+              <Divider horizontal>Estudios esperando resultado </Divider>
             )}
 
           {exams === "esperandoLote" &&
