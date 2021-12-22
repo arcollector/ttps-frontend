@@ -3,13 +3,19 @@ import { toast } from "react-toastify";
 import { UsersService } from "./services";
 import { User } from "./interfaces";
 
-export const registerFirebaseAuth = async (email: string, pass: string) => {
+export const registerFirebaseAuth = async (
+  email: string,
+  pass: string,
+  succcessText?: string
+) => {
   try {
     await UsersService.registerFirebaseAuth(email, pass);
-    toast.success("Hemos enviado un correo para confirmar su cuenta");
+    toast.success(
+      succcessText || "Hemos enviado un correo para confirmar su cuenta"
+    );
     return true;
   } catch (error) {
-    console.log(error);
+    console.error(error);
     const e = error as any;
     if (typeof e === "object" && e.code === "auth/email-already-in-use") {
       toast.error("Ya existe el correo electronico en nuestro sistema");
